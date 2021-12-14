@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:oldtimers_rally_app/model/authentication.dart';
 
 abstract class AuthenticationEvent extends Equatable {
   const AuthenticationEvent();
@@ -16,7 +16,7 @@ class LoggingIn extends AuthenticationEvent {
   final String login;
   final String password;
 
-  const LoggingIn({@required this.login, @required this.password});
+  const LoggingIn({required this.login, required this.password});
   @override
   List<Object> get props => [login, password];
 
@@ -25,27 +25,26 @@ class LoggingIn extends AuthenticationEvent {
 }
 
 class LoggedIn extends AuthenticationEvent {
-  final String token;
-  final String refresh;
+  final Authentication authentication;
 
-  const LoggedIn({@required this.token, @required this.refresh});
-
-  @override
-  List<Object> get props => [token, refresh];
+  const LoggedIn(this.authentication);
 
   @override
-  String toString() => 'LoggedIn { token: $token }';
+  List<Object> get props => [authentication];
+
+  @override
+  String toString() => 'LoggedIn { user: ${authentication.username} }';
 }
 
 class TokenRenewed extends AuthenticationEvent {
-  final String token;
+  final Authentication renewed;
 
-  TokenRenewed({@required this.token});
+  const TokenRenewed({required this.renewed});
 
   @override
-  String toString() => 'Token Renewed { token: $token }';
+  String toString() => 'Token Renewed { token: $renewed }';
   @override
-  List<Object> get props => [token];
+  List<Object> get props => [renewed];
 }
 
 class LostAuthentication extends AuthenticationEvent {}

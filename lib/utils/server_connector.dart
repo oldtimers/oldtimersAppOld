@@ -1,8 +1,10 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:http/http.dart' as http;
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:oldtimers_rally_app/authentication/authentication.dart';
+import 'package:oldtimers_rally_app/model/authentication.dart';
 import 'package:oldtimers_rally_app/utils/user_repository.dart';
 
 import '../const.dart';
@@ -13,31 +15,32 @@ class ServerConnectionException implements Exception {}
 
 class ServerConnector {
   static bool _isTokenExpired(String token) {
-    return JwtDecoder.isExpired(token);
+    return JwtDecoder.getRemainingTime(token).inSeconds < 3;
   }
 
-  static Future<String> _handleAuthorization(
+  static Future<Authentication> _handleAuthorization(
       AuthenticationBloc authBloc) async {
-    String token = (authBloc.state as AuthenticationAuthenticated).authToken;
+    Authentication? authentication =
+        (authBloc.state as AuthenticationAuthenticated).authentication;
     try {
-      if (_isTokenExpired(token)) {
-        token = await UserRepository.refreshToken();
+      if (_isTokenExpired(authentication.access)) {
+        authentication = await UserRepository.refreshToken();
       }
     } catch (e) {
       authBloc.add(AuthenticationError());
       throw ServerConnectionException();
     }
-    if (token == null) {
+    if (authentication == null) {
       authBloc.add(LostAuthentication());
       throw ServerConnectionException();
     }
-    return token;
+    return authentication;
   }
 
   static Future makeRequest(
       String url, AuthenticationBloc authBloc, requestType type,
       {int statusCode = 200, body = Null}) async {
-    String token = await _handleAuthorization(authBloc);
+    Authentication authentication = await _handleAuthorization(authBloc);
     var uri;
     if (kUseHTTPS) {
       uri = Uri.https(kServerUrl, url);
@@ -46,7 +49,7 @@ class ServerConnector {
     }
     Map<String, String> headers = {
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token'
+      'Authorization': 'Bearer ${authentication.access}'
     };
     var request;
     var response;
@@ -71,8 +74,8 @@ class ServerConnector {
     if (response.statusCode == statusCode) {
       return response;
     } else {
-      print(response.body);
-      print(json.decode(response.body));
+      log(response.body);
+      log(json.decode(response.body));
       throw ServerConnectionException();
     }
   }

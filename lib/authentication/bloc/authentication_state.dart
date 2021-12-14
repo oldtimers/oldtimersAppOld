@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:meta/meta.dart';
+import 'package:oldtimers_rally_app/model/authentication.dart';
 
 abstract class AuthenticationState extends Equatable {
   @override
@@ -11,9 +11,9 @@ abstract class AuthenticationState extends Equatable {
 class AuthenticationUninitialized extends AuthenticationState {}
 
 class AuthenticationAuthenticated extends AuthenticationState {
-  final String authToken;
+  Authentication authentication;
 
-  AuthenticationAuthenticated({@required this.authToken});
+  AuthenticationAuthenticated({required this.authentication});
 }
 
 class AuthenticationUnauthenticated extends AuthenticationState {}

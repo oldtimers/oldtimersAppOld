@@ -5,15 +5,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oldtimers_rally_app/authentication/authentication.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key key}) : super(key: key);
+  const LoginScreen({Key? key}) : super(key: key);
 
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  TextEditingController loginController;
-  TextEditingController passwordController;
+  late TextEditingController loginController;
+  late TextEditingController passwordController;
   List<Widget> additionalChildren = [];
   final GlobalKey<ScaffoldState> scaffold = GlobalKey<ScaffoldState>();
 

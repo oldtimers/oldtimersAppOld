@@ -5,14 +5,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oldtimers_rally_app/authentication/authentication.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key key}) : super(key: key);
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  AuthenticationBloc authBloc;
+  late AuthenticationBloc authBloc;
   bool isLoaded = false;
 
   @override
@@ -76,5 +76,17 @@ class _HomeScreenState extends State<HomeScreen> {
       // po = temp;
       isLoaded = true;
     });
+  }
+}
+
+class ds extends StatefulWidget {
+  @override
+  _dsState createState() => _dsState();
+}
+
+class _dsState extends State<ds> {
+  @override
+  Widget build(BuildContext context) {
+    return Container();
   }
 }

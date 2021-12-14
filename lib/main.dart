@@ -9,7 +9,7 @@ import 'package:oldtimers_rally_app/ui/screens/welcome_screen/login_screen.dart'
 import 'authentication/authentication.dart';
 
 void main() {
-  // Bloc.observer = SimpleBlocObserver();
+  Bloc.observer = SimpleBlocObserver();
   runApp(
     BlocProvider<AuthenticationBloc>(
       create: (context) {
@@ -31,11 +31,11 @@ class MyApp extends StatelessWidget {
             return SplashScreen();
           }
           if (authState is AuthenticationAuthenticated) {
-            return const HomeScreen();
+            return HomeScreen();
           }
           if (authState is AuthenticationUnauthenticated ||
               authState is AuthenticationInvalidCredentials) {
-            return const LoginScreen();
+            return LoginScreen();
           }
           if (authState is AuthenticationNotPossible) {
             return NoConnectionScreen();
@@ -79,7 +79,7 @@ class SimpleBlocObserver extends BlocObserver {
   }
 
   @override
-  void onEvent(Bloc bloc, Object event) {
+  void onEvent(Bloc bloc, Object? event) {
     print(event);
     super.onEvent(bloc, event);
   }

@@ -1,25 +1,29 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
-import 'package:meta/meta.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:oldtimers_rally_app/model/authentication.dart';
+import 'package:oldtimers_rally_app/model/refresh.dart';
 import 'package:tuple/tuple.dart';
 
 import '../const.dart';
 
 class UserRepository {
-  static Future<Tuple2<String, String>> login({
-    @required String login,
-    @required String password,
+  static Future<Authentication?> login({
+    required String login,
+    required String password,
   }) async {
     final uri = Uri.http(kServerUrl, kTokenCreate);
     var body = json.encode({
       'username': login,
       'password': password,
     });
-
-    print('Body: $body');
-    print('URI: $uri');
+    log(
+      'Body: $body',
+    );
+    log('URI: $uri');
     var response = await http.post(
       uri,
       headers: {
@@ -28,14 +32,12 @@ class UserRepository {
       body: body,
     );
     if (response.statusCode != 200) {
-      print(response.body);
+      log(response.body);
       return null;
     }
 
     var data = json.decode(response.body);
-    var refresh = data['refresh'];
-    var access = data['access'];
-    return Tuple2(refresh, access);
+    return Authentication.fromJson(data);
   }
 
   static Future<void> deleteToken() async {
@@ -59,80 +61,48 @@ class UserRepository {
     return;
   }
 
-  static Future<String> getTokenAndVerify() async {
+  static Future<Authentication?> retrieveAuthentication() async {
     const storage = FlutterSecureStorage();
     var auth = await storage.read(key: "auth_key");
-    if (auth != null) {
+    var refresh = await storage.read(key: "refresh");
+    if (auth != null && JwtDecoder.getRemainingTime(auth).inSeconds > 1) {
       final uri = Uri.http(kServerUrl, kTokenVerify);
-      var body = json.encode({
-        'token': auth,
-      });
-
-      print('Body: $body');
-
-      var response = await http.post(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: body,
-      );
+      var response = await http.post(uri, headers: {
+        'Content-Type': 'application/json',
+      }, body: {});
       if (response.statusCode != 200) {
-        var refresh = await storage.read(key: "refresh");
-        if (refresh != null) {
-          final uri = Uri.http(kServerUrl, kTokenRefresh);
-          var body = json.encode({
-            'refresh': refresh,
-          });
-          print('Body: $body');
-          var response = await http.post(
-            uri,
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': 'Bearer $auth'
-            },
-            body: body,
-          );
-          if (response.statusCode != 200) {
-            return null;
-          }
-          var data = json.decode(response.body);
-          auth = data["access"];
-          await storage.write(key: "auth_key", value: auth);
-          return auth;
-        } else {
-          return null;
-        }
+        return null;
       } else {
-        return auth;
+        return Authentication(
+            auth, refresh!, json.decode(response.body)['username']);
       }
+    }
+    if (refresh != null) {
+      return refreshToken();
     } else {
       return null;
     }
   }
 
-  static Future<String> refreshToken() async {
+  static Future<Authentication?> refreshToken() async {
     const storage = FlutterSecureStorage();
-    String refresh = await storage.read(key: 'refresh');
+    String? refresh = await storage.read(key: 'refresh');
     final uri = Uri.http(kServerUrl, kTokenRefresh);
-    var body = json.encode({
-      'refresh': refresh,
-    });
-    var response = await http.post(
-      uri,
-      headers: {'Content-Type': 'application/json'},
-      body: body,
-    );
-    if (response.statusCode != 200) {
-      // throw ServerConnectionException();
-      print("Could not refreshed JWT");
-      // authBloc.add(LostAuthentication());
-      return null;
-    } else {
-      print("Refreshed JWT");
-      String access = json.decode(response.body)['access'];
-      storage.write(key: 'auth_key', value: access);
-      return access;
+    if (refresh != null) {
+      var body = Refresh(refresh);
+      var response = await http.post(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: body.toJson(),
+      );
+      if (response.statusCode != 200) {
+        return null;
+      } else {
+        return Authentication.fromJson(jsonDecode(response.body));
+      }
     }
+    return null;
   }
 }
