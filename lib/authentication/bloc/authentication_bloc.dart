@@ -23,7 +23,6 @@ class AuthenticationBloc
         }
       } catch (error) {
         print(error);
-
         yield AuthenticationNotPossible();
       }
     }
@@ -32,7 +31,7 @@ class AuthenticationBloc
       try {
         Tuple2 r = await UserRepository.login(
             login: event.login, password: event.password);
-        if (r.item1 != null) {
+        if (r != null) {
           yield AuthenticationAuthenticated(authToken: r.item2);
         } else {
           yield AuthenticationInvalidCredentials(event.login);

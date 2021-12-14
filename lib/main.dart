@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oldtimers_rally_app/ui/screens/home_screen/home_screen.dart';
 import 'package:oldtimers_rally_app/ui/screens/no_connection_screen.dart';
 import 'package:oldtimers_rally_app/ui/screens/splash_screen.dart';
 import 'package:oldtimers_rally_app/ui/screens/welcome_screen/login_screen.dart';
@@ -30,7 +31,7 @@ class MyApp extends StatelessWidget {
             return SplashScreen();
           }
           if (authState is AuthenticationAuthenticated) {
-            // return HomeScreen();
+            return const HomeScreen();
           }
           if (authState is AuthenticationUnauthenticated ||
               authState is AuthenticationInvalidCredentials) {

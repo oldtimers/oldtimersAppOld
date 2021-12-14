@@ -14,6 +14,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   TextEditingController loginController;
   TextEditingController passwordController;
+  List<Widget> additionalChildren = [];
   final GlobalKey<ScaffoldState> scaffold = GlobalKey<ScaffoldState>();
 
   @override
@@ -23,6 +24,7 @@ class _LoginScreenState extends State<LoginScreen> {
     var state = BlocProvider.of<AuthenticationBloc>(context).state;
     if (state is AuthenticationInvalidCredentials) {
       loginController.text = state.login;
+      additionalChildren.add(const Text("Invalid login or password"));
     }
     super.initState();
   }
@@ -66,48 +68,49 @@ class _LoginScreenState extends State<LoginScreen> {
                   fit: BoxFit.cover)),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15),
-                child: TextField(
-                  controller: loginController,
-                  decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Login',
-                      hintText: 'Type login'),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                    left: 15.0, right: 15.0, top: 15, bottom: 0),
-                child: TextField(
-                  controller: passwordController,
-                  obscureText: true,
-                  decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Password',
-                      hintText: 'Enter password'),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(bottom: 0.05 * height),
-                child: FlatButton(
-                    color: Colors.black,
-                    textColor: Colors.white,
-                    splashColor: Colors.blueAccent,
-                    padding: const EdgeInsets.all(30),
-                    onPressed: () async {
-                      BlocProvider.of<AuthenticationBloc>(context).add(
-                          LoggingIn(
-                              login: loginController.value.text,
-                              password: passwordController.value.text));
-                    },
-                    child: const Text(
-                      "LOGIN",
-                      style: TextStyle(fontSize: 20.0),
-                    )),
-              ),
-            ],
+            children: additionalChildren +
+                [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    child: TextField(
+                      controller: loginController,
+                      decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Login',
+                          hintText: 'Type login'),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        left: 15.0, right: 15.0, top: 15, bottom: 0),
+                    child: TextField(
+                      controller: passwordController,
+                      obscureText: true,
+                      decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Password',
+                          hintText: 'Enter password'),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 0.05 * height),
+                    child: FlatButton(
+                        color: Colors.black,
+                        textColor: Colors.white,
+                        splashColor: Colors.blueAccent,
+                        padding: const EdgeInsets.all(30),
+                        onPressed: () async {
+                          BlocProvider.of<AuthenticationBloc>(context).add(
+                              LoggingIn(
+                                  login: loginController.value.text,
+                                  password: passwordController.value.text));
+                        },
+                        child: const Text(
+                          "LOGIN",
+                          style: TextStyle(fontSize: 20.0),
+                        )),
+                  ),
+                ],
           ),
         ),
       ),
