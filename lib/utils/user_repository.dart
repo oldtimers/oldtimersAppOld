@@ -41,7 +41,7 @@ class UserRepository {
   }
 
   static Future<void> deleteToken() async {
-    const storage = FlutterSecureStorage();
+    final storage = FlutterSecureStorage();
     await storage.delete(key: "refresh");
     await storage.delete(key: "auth_key");
     return;
@@ -49,27 +49,28 @@ class UserRepository {
 
   static Future<void> persistTokenAndRefresh(
       Tuple2<String, String> data) async {
-    const storage = FlutterSecureStorage();
+    final storage = FlutterSecureStorage();
     await storage.write(key: "refresh", value: data.item1);
     await storage.write(key: "auth_key", value: data.item2);
     return;
   }
 
   Future<void> persistToken(String token) async {
-    const storage = FlutterSecureStorage();
+    final storage = FlutterSecureStorage();
     await storage.write(key: "auth_key", value: token);
     return;
   }
 
   static Future<Authentication?> retrieveAuthentication() async {
-    const storage = FlutterSecureStorage();
+    final storage = FlutterSecureStorage();
     var auth = await storage.read(key: "auth_key");
     var refresh = await storage.read(key: "refresh");
-    if (auth != null && JwtDecoder.getRemainingTime(auth).inSeconds > 1) {
+    if (auth != null && JwtDecoder.getRemainingTime(auth).inSeconds > 3) {
       final uri = Uri.http(kServerUrl, kTokenVerify);
-      var response = await http.post(uri, headers: {
+      var response = await http.get(uri, headers: {
         'Content-Type': 'application/json',
-      }, body: {});
+        'Authorization': 'Bearer $auth'
+      });
       if (response.statusCode != 200) {
         return null;
       } else {
@@ -85,7 +86,7 @@ class UserRepository {
   }
 
   static Future<Authentication?> refreshToken() async {
-    const storage = FlutterSecureStorage();
+    final storage = FlutterSecureStorage();
     String? refresh = await storage.read(key: 'refresh');
     final uri = Uri.http(kServerUrl, kTokenRefresh);
     if (refresh != null) {

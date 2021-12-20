@@ -6,8 +6,7 @@ import 'package:tuple/tuple.dart';
 import 'authentication_events.dart';
 import 'authentication_state.dart';
 
-class AuthenticationBloc
-    extends Bloc<AuthenticationEvent, AuthenticationState> {
+class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> {
   AuthenticationBloc(AuthenticationState initialState) : super(initialState);
 
   @override
@@ -16,8 +15,7 @@ class AuthenticationBloc
   ) async* {
     if (event is AppStarted) {
       try {
-        final Authentication? authentication =
-            await UserRepository.retrieveAuthentication();
+        final Authentication? authentication = await UserRepository.retrieveAuthentication();
         if (authentication != null) {
           yield AuthenticationAuthenticated(authentication: authentication);
         } else {
@@ -30,9 +28,9 @@ class AuthenticationBloc
     if (event is LoggingIn) {
       yield AuthenticationLoading();
       try {
-        Authentication? r = await UserRepository.login(
-            login: event.login, password: event.password);
+        Authentication? r = await UserRepository.login(login: event.login, password: event.password);
         if (r != null) {
+          await UserRepository.persistTokenAndRefresh(Tuple2(r.refresh, r.access));
           yield AuthenticationAuthenticated(authentication: r);
         } else {
           yield AuthenticationInvalidCredentials(event.login);
@@ -43,8 +41,7 @@ class AuthenticationBloc
     }
     if (event is LoggedIn) {
       yield AuthenticationLoading();
-      await UserRepository.persistTokenAndRefresh(
-          Tuple2(event.authentication.refresh, event.authentication.access));
+      await UserRepository.persistTokenAndRefresh(Tuple2(event.authentication.refresh, event.authentication.access));
       yield AuthenticationAuthenticated(authentication: event.authentication);
     }
     if (event is LoggedOut) {
