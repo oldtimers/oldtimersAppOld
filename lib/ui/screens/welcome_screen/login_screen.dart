@@ -62,10 +62,7 @@ class _LoginScreenState extends State<LoginScreen> {
           centerTitle: true,
         ),
         body: Container(
-          decoration: const BoxDecoration(
-              image: DecorationImage(
-                  image: AssetImage('resources/background_main_photo2.jpg'),
-                  fit: BoxFit.cover)),
+          decoration: const BoxDecoration(image: DecorationImage(image: AssetImage('resources/background_main_photo2.jpg'), fit: BoxFit.cover)),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: additionalChildren +
@@ -74,22 +71,15 @@ class _LoginScreenState extends State<LoginScreen> {
                     padding: const EdgeInsets.symmetric(horizontal: 15),
                     child: TextField(
                       controller: loginController,
-                      decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Login',
-                          hintText: 'Type login'),
+                      decoration: const InputDecoration(border: OutlineInputBorder(), labelText: 'Login', hintText: 'Type login'),
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(
-                        left: 15.0, right: 15.0, top: 15, bottom: 0),
+                    padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 15, bottom: 0),
                     child: TextField(
                       controller: passwordController,
                       obscureText: true,
-                      decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Password',
-                          hintText: 'Enter password'),
+                      decoration: const InputDecoration(border: OutlineInputBorder(), labelText: 'Password', hintText: 'Enter password'),
                     ),
                   ),
                   Padding(
@@ -100,10 +90,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         splashColor: Colors.blueAccent,
                         padding: const EdgeInsets.all(30),
                         onPressed: () async {
-                          BlocProvider.of<AuthenticationBloc>(context).add(
-                              LoggingIn(
-                                  login: loginController.value.text,
-                                  password: passwordController.value.text));
+                          BlocProvider.of<AuthenticationBloc>(context)
+                              .add(LoggingIn(login: loginController.value.text, password: passwordController.value.text));
                         },
                         child: const Text(
                           "LOGIN",

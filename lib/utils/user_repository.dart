@@ -47,8 +47,7 @@ class UserRepository {
     return;
   }
 
-  static Future<void> persistTokenAndRefresh(
-      Tuple2<String, String> data) async {
+  static Future<void> persistTokenAndRefresh(Tuple2<String, String> data) async {
     final storage = FlutterSecureStorage();
     await storage.write(key: "refresh", value: data.item1);
     await storage.write(key: "auth_key", value: data.item2);
@@ -67,15 +66,11 @@ class UserRepository {
     var refresh = await storage.read(key: "refresh");
     if (auth != null && JwtDecoder.getRemainingTime(auth).inSeconds > 3) {
       final uri = Uri.http(kServerUrl, kTokenVerify);
-      var response = await http.get(uri, headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $auth'
-      });
+      var response = await http.get(uri, headers: {'Authorization': 'Bearer $auth'});
       if (response.statusCode != 200) {
         return null;
       } else {
-        return Authentication(
-            auth, refresh!, json.decode(response.body)['username']);
+        return Authentication(auth, refresh!, json.decode(response.body)['username']);
       }
     }
     if (refresh != null) {
@@ -93,9 +88,6 @@ class UserRepository {
       var body = Refresh(refresh);
       var response = await http.post(
         uri,
-        headers: {
-          'Content-Type': 'application/json',
-        },
         body: body.toJson(),
       );
       if (response.statusCode != 200) {

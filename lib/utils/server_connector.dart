@@ -18,10 +18,8 @@ class ServerConnector {
     return JwtDecoder.getRemainingTime(token).inSeconds < 3;
   }
 
-  static Future<Authentication> _handleAuthorization(
-      AuthenticationBloc authBloc) async {
-    Authentication? authentication =
-        (authBloc.state as AuthenticationAuthenticated).authentication;
+  static Future<Authentication> _handleAuthorization(AuthenticationBloc authBloc) async {
+    Authentication? authentication = (authBloc.state as AuthenticationAuthenticated).authentication;
     try {
       if (_isTokenExpired(authentication.access)) {
         authentication = await UserRepository.refreshToken();
@@ -37,9 +35,7 @@ class ServerConnector {
     return authentication;
   }
 
-  static Future makeRequest(
-      String url, AuthenticationBloc authBloc, requestType type,
-      {int statusCode = 200, body = Null}) async {
+  static Future makeRequest(String url, AuthenticationBloc authBloc, requestType type, {int statusCode = 200, body = Null}) async {
     Authentication authentication = await _handleAuthorization(authBloc);
     var uri;
     if (kUseHTTPS) {
@@ -47,10 +43,7 @@ class ServerConnector {
     } else {
       uri = Uri.http(kServerUrl, url);
     }
-    Map<String, String> headers = {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ${authentication.access}'
-    };
+    Map<String, String> headers = {'Authorization': 'Bearer ${authentication.access}'};
     var request;
     var response;
     switch (type) {
