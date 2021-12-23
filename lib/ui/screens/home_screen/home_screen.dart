@@ -71,8 +71,13 @@ class _HomeScreenState extends State<HomeScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 15),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
-                children: const [
-                  Text('Rallies'),
+                children: [
+                  const Text('Rallies'),
+                  TextButton(
+                      onPressed: () async {
+                        authBloc.add(LoggedOut());
+                      },
+                      child: const Text('Logout')),
                 ],
               ),
             ),

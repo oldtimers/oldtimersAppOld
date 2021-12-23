@@ -86,10 +86,7 @@ class UserRepository {
     final uri = Uri.http(kServerUrl, kTokenRefresh);
     if (refresh != null) {
       var body = Refresh(refresh);
-      var response = await http.post(
-        uri,
-        body: body.toJson(),
-      );
+      var response = await http.post(uri, body: jsonEncode(body.toJson()), headers: {'Content-Type': 'application/json'});
       if (response.statusCode != 200) {
         return null;
       } else {
