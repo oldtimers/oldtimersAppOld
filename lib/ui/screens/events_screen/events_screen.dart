@@ -3,20 +3,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oldtimers_rally_app/authentication/authentication.dart';
+import 'package:oldtimers_rally_app/model/competition.dart';
 import 'package:oldtimers_rally_app/model/event.dart';
-import 'package:oldtimers_rally_app/ui/screens/events_screen/events_screen.dart';
+import 'package:oldtimers_rally_app/ui/screens/event_screen/event_screen.dart';
 import 'package:oldtimers_rally_app/utils/data_repository.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+class EventsScreen extends StatefulWidget {
+  final Event event;
+
+  const EventsScreen({Key? key, required this.event}) : super(key: key);
 
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  _EventsScreenState createState() => _EventsScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _EventsScreenState extends State<EventsScreen> {
   late AuthenticationBloc authBloc;
-  late List<Event> events;
+  late List<Competition> competitions;
   bool isLoaded = false;
 
   @override
@@ -29,8 +32,8 @@ class _HomeScreenState extends State<HomeScreen> {
     double height = MediaQuery.of(context).size.height;
 
     if (isLoaded) {
-      List<Widget> eventWidgets = [];
-      for (Event event in events) {
+      List<Center> eventWidgets = [];
+      for (Competition competition in competitions) {
         eventWidgets.add(Center(
           child: Padding(
             padding: EdgeInsets.only(bottom: 0.05 * height),
@@ -43,12 +46,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => EventsScreen(
-                                event: event,
+                          builder: (context) => EventScreen(
+                                event: widget.event,
+                                competition: competition,
                               )));
                 },
                 child: Text(
-                  event.name,
+                  competition.name,
                   style: const TextStyle(fontSize: 20.0),
                 )),
           ),
@@ -71,27 +75,27 @@ class _HomeScreenState extends State<HomeScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 15),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  const Text('Rallies'),
-                  TextButton(
-                      onPressed: () async {
-                        authBloc.add(LoggedOut());
-                      },
-                      child: const Text('Logout')),
+                children: const [
+                  Text('Competitions'),
                 ],
               ),
             ),
             centerTitle: true,
           ),
           body: Container(
-            decoration: const BoxDecoration(image: DecorationImage(image: AssetImage('resources/background_main_photo.jpg'), fit: BoxFit.cover)),
+            decoration: const BoxDecoration(image: DecorationImage(image: AssetImage('resources/effi_background.jpg'), fit: BoxFit.cover)),
             width: width,
             height: height,
             child: ListView(
               shrinkWrap: true,
               padding: const EdgeInsets.all(15.0),
               scrollDirection: Axis.vertical,
-              children: eventWidgets,
+              children: ([
+                    Center(
+                      child: Text(widget.event.name),
+                    )
+                  ]) +
+                  eventWidgets,
             ),
           ),
         ),
@@ -106,14 +110,14 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     authBloc = BlocProvider.of<AuthenticationBloc>(context);
-    _getEvents();
+    _getCompetitions(widget.event);
     super.initState();
   }
 
-  void _getEvents() async {
-    var temp = await DataRepository.getEvents(authBloc);
+  void _getCompetitions(Event event) async {
+    var temp = await DataRepository.getCompetitions(event, authBloc);
     setState(() {
-      events = temp;
+      competitions = temp;
       isLoaded = true;
     });
   }

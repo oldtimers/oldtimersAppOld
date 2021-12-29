@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:oldtimers_rally_app/authentication/authentication.dart';
 import 'package:oldtimers_rally_app/const.dart';
 import 'package:oldtimers_rally_app/model/competition.dart';
+import 'package:oldtimers_rally_app/model/crew.dart';
 import 'package:oldtimers_rally_app/model/event.dart';
 import 'package:oldtimers_rally_app/utils/server_connector.dart';
 import 'package:sprintf/sprintf.dart';
@@ -20,5 +21,12 @@ class DataRepository {
     Iterable l = json.decode(response.body);
     List<Competition> competitions = List<Competition>.from(l.map((model) => Competition.fromJson(model)));
     return competitions;
+  }
+
+  static Future<Crew?> getCrew(String qr, AuthenticationBloc authBloc) async {
+    var response = await ServerConnector.makeRequest(kCrew, authBloc, requestType.POST, statusCode: {200, 400}, body: {"qr": qr});
+    if (response.statusCode == 200) {
+      return Crew.fromJson(json.decode(response.body));
+    }
   }
 }

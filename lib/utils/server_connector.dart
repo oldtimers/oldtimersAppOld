@@ -35,7 +35,7 @@ class ServerConnector {
     return authentication;
   }
 
-  static Future makeRequest(String url, AuthenticationBloc authBloc, requestType type, {int statusCode = 200, body = Null}) async {
+  static Future<http.Response> makeRequest(String url, AuthenticationBloc authBloc, requestType type, {Set<int> statusCode = const {200}, body = Null}) async {
     Authentication authentication = await _handleAuthorization(authBloc);
     var uri;
     if (kUseHTTPS) {
@@ -64,7 +64,7 @@ class ServerConnector {
         response = await request(uri, headers: headers, body: body);
         break;
     }
-    if (response.statusCode == statusCode) {
+    if (statusCode.contains(response.statusCode)) {
       return response;
     } else {
       log(response.body);

@@ -5,4 +5,5 @@ String kTokenVerify = '/api/auth/verify';
 String kEvents = '/api/event/';
 String kEvent = '/api/event/%d/';
 String kCompetitions = '/api/event/%d/competition/';
+String kCrew = '/api/crew/';
 bool kUseHTTPS = false;
