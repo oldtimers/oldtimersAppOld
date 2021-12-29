@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:developer';
 
 import 'package:http/http.dart' as http;
@@ -53,22 +52,24 @@ class ServerConnector {
         break;
       case requestType.POST:
         request = http.post;
+        headers.addAll({'Content-Type': 'application/json'});
         response = await request(uri, headers: headers, body: body);
         break;
       case requestType.PUT:
         request = http.put;
+        headers.addAll({'Content-Type': 'application/json'});
         response = await request(uri, headers: headers, body: body);
         break;
       case requestType.DELETE:
         request = http.delete;
+        headers.addAll({'Content-Type': 'application/json'});
         response = await request(uri, headers: headers, body: body);
         break;
     }
     if (statusCode.contains(response.statusCode)) {
       return response;
     } else {
-      log(response.body);
-      log(json.decode(response.body));
+      log(response.toString());
       throw ServerConnectionException();
     }
   }

@@ -23,10 +23,28 @@ class DataRepository {
     return competitions;
   }
 
-  static Future<Crew?> getCrew(String qr, AuthenticationBloc authBloc) async {
-    var response = await ServerConnector.makeRequest(kCrew, authBloc, requestType.POST, statusCode: {200, 400}, body: {"qr": qr});
+  static Future<Crew?> getCrew(String qr, Event event, AuthenticationBloc authBloc) async {
+    var response =
+        await ServerConnector.makeRequest(sprintf(kCrew, [event.id]), authBloc, requestType.POST, statusCode: {200, 400}, body: jsonEncode({"qr": qr}));
     if (response.statusCode == 200) {
       return Crew.fromJson(json.decode(response.body));
     }
+  }
+
+  static setResultOnRegStart(DateTime time, int crewID, int competitionID, int eventId, AuthenticationBloc authBloc) async {
+    var body = jsonEncode(<String, dynamic>{'position': 'START', 'crewId': crewID, 'competitionId': competitionID, 'time': time.millisecondsSinceEpoch});
+    var response = await ServerConnector.makeRequest(sprintf(kScoreReg, [eventId]), authBloc, requestType.POST, body: body);
+  }
+
+  static getCrewsInRegCompetition(AuthenticationBloc authBloc, int eventId, int competitionId) async {
+    var response = await ServerConnector.makeRequest(sprintf(kCrewsInCompetition, [eventId, competitionId]), authBloc, requestType.GET);
+    Iterable l = json.decode(response.body);
+    List<Crew> events = List<Crew>.from(l.map((model) => Crew.fromJson(model)));
+    return events;
+  }
+
+  static setResultOnRegEnd(DateTime time, int crewID, int competitionID, int eventId, AuthenticationBloc authBloc) async {
+    var body = jsonEncode(<String, dynamic>{'position': 'END', 'crewId': crewID, 'competitionId': competitionID, 'time': time.millisecondsSinceEpoch});
+    var response = await ServerConnector.makeRequest(sprintf(kScoreReg, [eventId]), authBloc, requestType.POST, body: body);
   }
 }

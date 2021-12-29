@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:oldtimers_rally_app/model/competition.dart';
 import 'package:oldtimers_rally_app/model/event.dart';
 import 'package:oldtimers_rally_app/ui/screens/crew_qr_screen/crew_qr_screen.dart';
+import 'package:oldtimers_rally_app/ui/screens/score_screen/reg_end.dart';
 
 class EventScreen extends StatefulWidget {
   final Event event;
@@ -26,10 +27,8 @@ class _EventScreenState extends State<EventScreen> {
     if (widget.competition.type == 'REGULAR_DRIVE') {
       return _regularDrive();
     } else {
-      //  classic
+      return Container();
     }
-
-    return Container();
   }
 
   // Widget _classic() {}
@@ -106,8 +105,7 @@ class _EventScreenState extends State<EventScreen> {
                       splashColor: Colors.blueAccent,
                       padding: const EdgeInsets.all(30),
                       onPressed: () {
-                        //TODO
-                        // Navigator.push(context, MaterialPageRoute(builder: (context) => RegScreenEnd(widget.competition, widget.additionalInfoCompetition)));
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => RegEnd(competition: widget.competition, event: widget.event)));
                       },
                       child: const Text(
                         "END",

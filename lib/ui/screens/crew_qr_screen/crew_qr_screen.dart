@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,6 +6,7 @@ import 'package:oldtimers_rally_app/authentication/bloc/authentication_bloc.dart
 import 'package:oldtimers_rally_app/model/competition.dart';
 import 'package:oldtimers_rally_app/model/crew.dart';
 import 'package:oldtimers_rally_app/model/event.dart';
+import 'package:oldtimers_rally_app/ui/screens/score_screen/reg_start.dart';
 import 'package:oldtimers_rally_app/utils/data_repository.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
@@ -123,9 +122,26 @@ class _CrewQrScreenState extends State<CrewQrScreen> {
         scaffold.currentState!.showSnackBar(const SnackBar(content: Text("Checking QR code")));
       }
       if (scanData.code != null) {
-        Crew? crew = await DataRepository.getCrew(scanData.code!, authBloc);
+        Crew? crew = await DataRepository.getCrew(scanData.code!, widget.event, authBloc);
         if (crew != null) {
-          log(crew.toString());
+          Route route;
+          if (widget.competition.type == 'REGULAR_DRIVE') {
+            route = MaterialPageRoute(
+                builder: (context) => RegStart(
+                      event: widget.event,
+                      competition: widget.competition,
+                      crew: crew,
+                    ));
+          } else {
+            //TODO
+            route = MaterialPageRoute(
+                builder: (context) => RegStart(
+                      event: widget.event,
+                      competition: widget.competition,
+                      crew: crew,
+                    ));
+          }
+          Navigator.pushReplacement(context, route);
         } else {
           if (scaffold.currentState != null) {
             scaffold.currentState!.showSnackBar(const SnackBar(content: Text("Invalid QR code")));
