@@ -12,12 +12,17 @@ Competition _$CompetitionFromJson(Map<String, dynamic> json) => Competition(
       json['description'] as String,
       json['type'] as String,
       (json['averageSpeed'] as num?)?.toDouble(),
+      (json['fields'] as List<dynamic>)
+          .map((e) => CompetitionField.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
-Map<String, dynamic> _$CompetitionToJson(Competition instance) => <String, dynamic>{
+Map<String, dynamic> _$CompetitionToJson(Competition instance) =>
+    <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
       'description': instance.description,
       'type': instance.type,
       'averageSpeed': instance.averageSpeed,
+      'fields': instance.fields,
     };
