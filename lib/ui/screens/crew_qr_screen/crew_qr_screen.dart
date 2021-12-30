@@ -6,7 +6,8 @@ import 'package:oldtimers_rally_app/authentication/bloc/authentication_bloc.dart
 import 'package:oldtimers_rally_app/model/competition.dart';
 import 'package:oldtimers_rally_app/model/crew.dart';
 import 'package:oldtimers_rally_app/model/event.dart';
-import 'package:oldtimers_rally_app/ui/screens/score_screen/reg_start.dart';
+import 'package:oldtimers_rally_app/ui/screens/score_screen/custom_screen.dart';
+import 'package:oldtimers_rally_app/ui/screens/score_screen/reg_start_screen.dart';
 import 'package:oldtimers_rally_app/utils/data_repository.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
@@ -127,15 +128,14 @@ class _CrewQrScreenState extends State<CrewQrScreen> {
           Route route;
           if (widget.competition.type == 'REGULAR_DRIVE') {
             route = MaterialPageRoute(
-                builder: (context) => RegStart(
+                builder: (context) => RegStartScreen(
                       event: widget.event,
                       competition: widget.competition,
                       crew: crew,
                     ));
           } else {
-            //TODO
             route = MaterialPageRoute(
-                builder: (context) => RegStart(
+                builder: (context) => CustomScreen(
                       event: widget.event,
                       competition: widget.competition,
                       crew: crew,

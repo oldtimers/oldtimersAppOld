@@ -34,7 +34,7 @@ class ServerConnector {
     return authentication;
   }
 
-  static Future<http.Response> makeRequest(String url, AuthenticationBloc authBloc, requestType type, {Set<int> statusCode = const {200}, body = Null}) async {
+  static Future<http.Response> makeRequest(String url, AuthenticationBloc authBloc, requestType type, {Set<int> statusCode = const {200}, String? body}) async {
     Authentication authentication = await _handleAuthorization(authBloc);
     var uri;
     if (kUseHTTPS) {

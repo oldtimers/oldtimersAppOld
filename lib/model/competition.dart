@@ -12,7 +12,11 @@ class Competition {
   final double? averageSpeed;
   final List<CompetitionField> fields;
 
-  factory Competition.fromJson(Map<String, dynamic> json) => _$CompetitionFromJson(json);
+  factory Competition.fromJson(Map<String, dynamic> json) {
+    var res = _$CompetitionFromJson(json);
+    res.fields.sort((a, b) => a.order.compareTo(b.order));
+    return res;
+  }
 
   Competition(this.id, this.name, this.description, this.type, this.averageSpeed, this.fields);
 }

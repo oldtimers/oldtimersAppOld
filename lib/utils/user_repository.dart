@@ -36,7 +36,7 @@ class UserRepository {
       return null;
     }
 
-    var data = json.decode(response.body);
+    var data = json.decode(utf8.decode(response.bodyBytes));
     return Authentication.fromJson(data);
   }
 
@@ -70,7 +70,7 @@ class UserRepository {
       if (response.statusCode != 200) {
         return null;
       } else {
-        return Authentication(auth, refresh!, json.decode(response.body)['username']);
+        return Authentication(auth, refresh!, json.decode(utf8.decode(response.bodyBytes))['username']);
       }
     }
     if (refresh != null) {

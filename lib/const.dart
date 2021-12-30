@@ -1,4 +1,4 @@
-String kServerUrl = '192.168.1.162:8080';
+String kServerUrl = '192.168.1.244:8080';
 String kTokenCreate = '/api/auth/login/';
 String kTokenRefresh = '/api/auth/refresh/';
 String kTokenVerify = '/api/auth/verify';
@@ -8,4 +8,5 @@ String kCompetitions = '/api/event/%d/competition/';
 String kCrew = '/api/event/%d/crew/';
 String kScoreReg = '/api/event/%d/score/reg/';
 String kCrewsInCompetition = '/api/event/%d/competition/%d/crews';
+String kScore = '/api/event/%d/score/';
 bool kUseHTTPS = false;

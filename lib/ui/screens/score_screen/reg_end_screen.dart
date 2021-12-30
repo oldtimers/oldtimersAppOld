@@ -11,17 +11,17 @@ import 'package:oldtimers_rally_app/model/event.dart';
 import 'package:oldtimers_rally_app/utils/data_repository.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
-class RegEnd extends StatefulWidget {
+class RegEndScreen extends StatefulWidget {
   final Competition competition;
   final Event event;
 
-  const RegEnd({Key? key, required this.competition, required this.event}) : super(key: key);
+  const RegEndScreen({Key? key, required this.competition, required this.event}) : super(key: key);
 
   @override
-  _RegEndState createState() => _RegEndState();
+  _RegEndScreenState createState() => _RegEndScreenState();
 }
 
-class _RegEndState extends State<RegEnd> {
+class _RegEndScreenState extends State<RegEndScreen> {
   late AuthenticationBloc authBloc;
   late Timer timer;
   List<Crew> crewsInCompetition = [];

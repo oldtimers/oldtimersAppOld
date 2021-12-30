@@ -9,18 +9,18 @@ import 'package:oldtimers_rally_app/model/event.dart';
 import 'package:oldtimers_rally_app/ui/screens/crew_qr_screen/crew_qr_screen.dart';
 import 'package:oldtimers_rally_app/utils/data_repository.dart';
 
-class RegStart extends StatefulWidget {
+class RegStartScreen extends StatefulWidget {
   final Crew crew;
   final Competition competition;
   final Event event;
 
-  const RegStart({Key? key, required this.crew, required this.competition, required this.event}) : super(key: key);
+  const RegStartScreen({Key? key, required this.crew, required this.competition, required this.event}) : super(key: key);
 
   @override
-  _RegStartState createState() => _RegStartState();
+  _RegStartScreenState createState() => _RegStartScreenState();
 }
 
-class _RegStartState extends State<RegStart> {
+class _RegStartScreenState extends State<RegStartScreen> {
   late AuthenticationBloc authBloc;
 
   @override
