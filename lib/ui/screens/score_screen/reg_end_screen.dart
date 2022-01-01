@@ -196,7 +196,7 @@ class _ConfirmDialogState extends State<ConfirmDialog> {
     setState(() {
       loading = true;
     });
-    await DataRepository.setResultOnRegEnd(widget.timestamp, widget.crew.number, widget.competition.id, widget.event.id, widget.authBloc);
+    await DataRepository.setResultOnRegEnd(widget.timestamp, widget.crew.id, widget.competition.id, widget.event.id, widget.authBloc);
     widget.actionOnEnd();
     Navigator.of(context).pop();
   }

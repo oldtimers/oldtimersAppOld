@@ -13,8 +13,7 @@ void main() {
   runApp(
     BlocProvider<AuthenticationBloc>(
       create: (context) {
-        return AuthenticationBloc(AuthenticationUninitialized())
-          ..add(AppStarted());
+        return AuthenticationBloc(AuthenticationUninitialized())..add(AppStarted());
       },
       child: MyApp(),
     ),
@@ -25,6 +24,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
         builder: (context, authState) {
           if (authState is AuthenticationUninitialized) {
@@ -33,8 +33,7 @@ class MyApp extends StatelessWidget {
           if (authState is AuthenticationAuthenticated) {
             return HomeScreen();
           }
-          if (authState is AuthenticationUnauthenticated ||
-              authState is AuthenticationInvalidCredentials) {
+          if (authState is AuthenticationUnauthenticated || authState is AuthenticationInvalidCredentials) {
             return LoginScreen();
           }
           if (authState is AuthenticationNotPossible) {

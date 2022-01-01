@@ -81,6 +81,7 @@ class _EventScreenState extends State<EventScreen> {
       ),
       body: Container(
           width: width,
+          height: height,
           decoration: const BoxDecoration(image: DecorationImage(image: AssetImage('resources/time_background.jpg'), fit: BoxFit.cover)),
           child: SingleChildScrollView(
             child: Column(
