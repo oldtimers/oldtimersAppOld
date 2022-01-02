@@ -149,7 +149,7 @@ class _CustomScreenState extends State<CustomScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               Text(
-                sprintf("Crew: %d, %s", [widget.crew.id, widget.crew.driverName]),
+                sprintf("Crew: %d, %s", [widget.crew.number, widget.crew.driverName]),
                 style: const TextStyle(fontSize: 25.0, fontWeight: FontWeight.w800, color: Colors.white),
                 textAlign: TextAlign.center,
               ),
