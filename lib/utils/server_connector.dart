@@ -36,7 +36,7 @@ class ServerConnector {
 
   static Future<http.Response> makeRequest(String url, AuthenticationBloc authBloc, requestType type, {Set<int> statusCode = const {200}, String? body}) async {
     Authentication authentication = await _handleAuthorization(authBloc);
-    var uri;
+    Uri uri;
     if (kUseHTTPS) {
       uri = Uri.https(kServerUrl, url);
     } else {

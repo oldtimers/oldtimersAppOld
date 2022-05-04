@@ -15,7 +15,12 @@ class UserRepository {
     required String login,
     required String password,
   }) async {
-    final uri = Uri.http(kServerUrl, kTokenCreate);
+    final Uri uri;
+    if (kUseHTTPS) {
+      uri = Uri.https(kServerUrl, kTokenCreate);
+    } else {
+      uri = Uri.http(kServerUrl, kTokenCreate);
+    }
     var body = json.encode({
       'username': login,
       'password': password,
@@ -65,7 +70,12 @@ class UserRepository {
     var auth = await storage.read(key: "auth_key");
     var refresh = await storage.read(key: "refresh");
     if (auth != null && JwtDecoder.getRemainingTime(auth).inSeconds > 3) {
-      final uri = Uri.http(kServerUrl, kTokenVerify);
+      final Uri uri;
+      if (kUseHTTPS) {
+        uri = Uri.https(kServerUrl, kTokenVerify);
+      } else {
+        uri = Uri.http(kServerUrl, kTokenVerify);
+      }
       var response = await http.get(uri, headers: {'Authorization': 'Bearer $auth'});
       if (response.statusCode != 200) {
         return null;
@@ -83,7 +93,12 @@ class UserRepository {
   static Future<Authentication?> refreshToken() async {
     final storage = FlutterSecureStorage();
     String? refresh = await storage.read(key: 'refresh');
-    final uri = Uri.http(kServerUrl, kTokenRefresh);
+    final Uri uri;
+    if (kUseHTTPS) {
+      uri = Uri.https(kServerUrl, kTokenRefresh);
+    } else {
+      uri = Uri.http(kServerUrl, kTokenRefresh);
+    }
     if (refresh != null) {
       var body = Refresh(refresh);
       var response = await http.post(uri, body: jsonEncode(body.toJson()), headers: {'Content-Type': 'application/json'});

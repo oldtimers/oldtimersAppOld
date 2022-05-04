@@ -1,4 +1,4 @@
-String kServerUrl = '192.168.1.244:8080';
+String kServerUrl = 'www.oldtimersweb.com';
 String kTokenCreate = '/api/auth/login/';
 String kTokenRefresh = '/api/auth/refresh/';
 String kTokenVerify = '/api/auth/verify';
@@ -9,4 +9,4 @@ String kCrew = '/api/event/%d/crew/';
 String kScoreReg = '/api/event/%d/score/reg/';
 String kCrewsInCompetition = '/api/event/%d/competition/%d/crews';
 String kScore = '/api/event/%d/score/';
-bool kUseHTTPS = false;
+bool kUseHTTPS = true;
