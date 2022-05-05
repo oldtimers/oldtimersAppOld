@@ -48,6 +48,19 @@ class _EventScreenState extends State<EventScreen> {
         ),
         color: Colors.black,
       ));
+      if (widget.competition.possibleInvalid){
+        fields.add(Container(
+          child: const Padding(
+            padding: EdgeInsets.all(10.0),
+            child: Text(
+              "Enabled possible invalid",
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 20.0, color: Colors.white),
+            ),
+          ),
+          color: Colors.black,
+        ));
+      }
       if (i < compFields.length - 1) {
         fields.add(SizedBox(
           height: height * 0.01,

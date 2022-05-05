@@ -176,6 +176,20 @@ class _CustomScreenState extends State<CustomScreen> {
                   child: const Text("Send", style: TextStyle(fontSize: 20.0)),
                 ),
               ),
+              Padding(
+                padding: EdgeInsets.only(bottom: 0.01 * height),
+                child: FlatButton(
+                  color: Colors.black,
+                  textColor: Colors.red,
+                  splashColor: Colors.blueAccent,
+                  padding: const EdgeInsets.all(30),
+                  onPressed: () async {
+                    await DataRepository.setResult(widget.competition, widget.crew, widget.event, {"invalidResult":true}, authBloc);
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text("Invalidate result", style: TextStyle(fontSize: 20.0)),
+                ),
+              ),
             ],
           ),
         ),

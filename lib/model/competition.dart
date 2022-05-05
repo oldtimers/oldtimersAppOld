@@ -11,6 +11,7 @@ class Competition {
   final String type;
   final double? averageSpeed;
   final List<CompetitionField> fields;
+  final bool possibleInvalid;
 
   factory Competition.fromJson(Map<String, dynamic> json) {
     var res = _$CompetitionFromJson(json);
@@ -18,7 +19,7 @@ class Competition {
     return res;
   }
 
-  Competition(this.id, this.name, this.description, this.type, this.averageSpeed, this.fields);
+  Competition(this.id, this.name, this.description, this.type, this.averageSpeed, this.fields, this.possibleInvalid);
 }
 
 enum CompetitionType { REGULAR_DRIVE, BEST_MIN, BEST_MAX, COUNTED }

@@ -15,6 +15,7 @@ Competition _$CompetitionFromJson(Map<String, dynamic> json) => Competition(
       (json['fields'] as List<dynamic>)
           .map((e) => CompetitionField.fromJson(e as Map<String, dynamic>))
           .toList(),
+      json['possibleInvalid'] as bool,
     );
 
 Map<String, dynamic> _$CompetitionToJson(Competition instance) =>
@@ -25,4 +26,5 @@ Map<String, dynamic> _$CompetitionToJson(Competition instance) =>
       'type': instance.type,
       'averageSpeed': instance.averageSpeed,
       'fields': instance.fields,
+      'possibleInvalid': instance.possibleInvalid,
     };
