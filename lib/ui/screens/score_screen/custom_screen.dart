@@ -94,6 +94,15 @@ class _CustomScreenState extends State<CustomScreen> {
     }).toList();
   }
 
+  void showPopup() async {
+    await showDialog(
+        context: context,
+        builder: (BuildContext dialogContext) {
+          var timestamp = DateTime.now().toUtc();
+          return ConfirmDialog(widget.crew, timestamp, widget.competition, authBloc, widget.event);
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
@@ -176,24 +185,74 @@ class _CustomScreenState extends State<CustomScreen> {
                   child: const Text("Send", style: TextStyle(fontSize: 20.0)),
                 ),
               ),
-              Padding(
-                padding: EdgeInsets.only(bottom: 0.01 * height),
-                child: FlatButton(
-                  color: Colors.black,
-                  textColor: Colors.red,
-                  splashColor: Colors.blueAccent,
-                  padding: const EdgeInsets.all(30),
-                  onPressed: () async {
-                    await DataRepository.setResult(widget.competition, widget.crew, widget.event, {"invalidResult":true}, authBloc);
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text("Invalidate result", style: TextStyle(fontSize: 20.0)),
+              if (widget.competition.possibleInvalid)
+                Padding(
+                  padding: EdgeInsets.only(bottom: 0.01 * height),
+                  child: FlatButton(
+                    color: Colors.black,
+                    textColor: Colors.red,
+                    splashColor: Colors.blueAccent,
+                    padding: const EdgeInsets.all(30),
+                    onPressed: () async {
+                      // await DataRepository.setResult(widget.competition, widget.crew, widget.event, {"invalidResult": true}, authBloc);
+                      // Navigator.of(context).pop();
+                      showPopup();
+                    },
+                    child: const Text("Invalidate result", style: TextStyle(fontSize: 20.0)),
+                  ),
                 ),
-              ),
             ],
           ),
         ),
       ),
     );
+  }
+}
+
+class ConfirmDialog extends StatefulWidget {
+  final Crew crew;
+  final DateTime timestamp;
+  final Competition competition;
+  final AuthenticationBloc authBloc;
+  final Event event;
+
+  const ConfirmDialog(this.crew, this.timestamp, this.competition, this.authBloc, this.event);
+
+  @override
+  _ConfirmDialogState createState() => _ConfirmDialogState();
+}
+
+class _ConfirmDialogState extends State<ConfirmDialog> {
+  void sendData() async {
+    setState(() {
+      loading = true;
+    });
+    await DataRepository.setResult(widget.competition, widget.crew, widget.event, {"invalidResult": true}, widget.authBloc);
+    int count = 0;
+    Navigator.of(context).popUntil((_) => count++ >= 2);
+  }
+
+  bool loading = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return !loading
+        ? AlertDialog(
+            title: Text(
+              "Are you sure You want to invalidate result of this crew?",
+              style: Theme.of(context).textTheme.subtitle1,
+            ),
+            actions: [
+              RaisedButton(
+                onPressed: sendData,
+                child: const Text("Yes"),
+              ),
+              RaisedButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text("No"),
+              )
+            ]
+          )
+        : const Center(child: CircularProgressIndicator());
   }
 }
