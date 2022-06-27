@@ -3,10 +3,8 @@ import 'dart:developer';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
-import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:oldtimers_rally_app/model/authentication.dart';
 import 'package:oldtimers_rally_app/model/refresh.dart';
-import 'package:tuple/tuple.dart';
 
 import '../const.dart';
 
@@ -47,65 +45,46 @@ class UserRepository {
 
   static Future<void> deleteToken() async {
     final storage = FlutterSecureStorage();
-    await storage.delete(key: "refresh");
-    await storage.delete(key: "auth_key");
-    return;
+    await storage.delete(key: "authentication");
   }
 
-  static Future<void> persistTokenAndRefresh(Tuple2<String, String> data) async {
+  static Future<void> persistAuthentication(Authentication authentication) async {
     final storage = FlutterSecureStorage();
-    await storage.write(key: "refresh", value: data.item1);
-    await storage.write(key: "auth_key", value: data.item2);
-    return;
-  }
-
-  Future<void> persistToken(String token) async {
-    final storage = FlutterSecureStorage();
-    await storage.write(key: "auth_key", value: token);
-    return;
-  }
-
-  static Future<Authentication?> retrieveAuthentication() async {
-    final storage = FlutterSecureStorage();
-    var auth = await storage.read(key: "auth_key");
-    var refresh = await storage.read(key: "refresh");
-    if (auth != null && JwtDecoder.getRemainingTime(auth).inSeconds > 3) {
-      final Uri uri;
-      if (kUseHTTPS) {
-        uri = Uri.https(kServerUrl, kTokenVerify);
-      } else {
-        uri = Uri.http(kServerUrl, kTokenVerify);
-      }
-      var response = await http.get(uri, headers: {'Authorization': 'Bearer $auth'});
-      if (response.statusCode != 200) {
-        return null;
-      } else {
-        return Authentication(auth, refresh!, json.decode(utf8.decode(response.bodyBytes))['username']);
-      }
-    }
-    if (refresh != null) {
-      return refreshToken();
-    } else {
-      return null;
-    }
+    await storage.write(key: "authentication", value: jsonEncode(authentication.toJson()));
   }
 
   static Future<Authentication?> refreshToken() async {
     final storage = FlutterSecureStorage();
-    String? refresh = await storage.read(key: 'refresh');
+    var data = await storage.read(key: "authentication");
     final Uri uri;
     if (kUseHTTPS) {
       uri = Uri.https(kServerUrl, kTokenRefresh);
     } else {
       uri = Uri.http(kServerUrl, kTokenRefresh);
     }
-    if (refresh != null) {
-      var body = Refresh(refresh);
+    if (data != null) {
+      Authentication authentication = Authentication.fromJson(jsonDecode(data));
+      var body = Refresh(authentication.refresh);
       var response = await http.post(uri, body: jsonEncode(body.toJson()), headers: {'Content-Type': 'application/json'});
       if (response.statusCode != 200) {
         return null;
       } else {
+        await storage.write(key: "authentication", value: response.body);
         return Authentication.fromJson(jsonDecode(response.body));
+      }
+    }
+    return null;
+  }
+
+  static Future<Authentication?> retrieveAuthentication() async {
+    final storage = FlutterSecureStorage();
+    var data = await storage.read(key: "authentication");
+    if (data != null) {
+      Authentication authentication = Authentication.fromJson(jsonDecode(data));
+      if (authentication.expirationDate.compareTo(DateTime.now().add(const Duration(days: 1))) > 0) {
+        return authentication;
+      } else if (authentication.expirationDate.compareTo(DateTime.now().add(const Duration(minutes: 3))) > 0) {
+        return refreshToken();
       }
     }
     return null;

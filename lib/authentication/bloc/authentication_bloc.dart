@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oldtimers_rally_app/model/authentication.dart';
+import 'package:oldtimers_rally_app/utils/my_database.dart';
 import 'package:oldtimers_rally_app/utils/user_repository.dart';
-import 'package:tuple/tuple.dart';
 
 import 'authentication_events.dart';
 import 'authentication_state.dart';
@@ -30,7 +30,8 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
       try {
         Authentication? r = await UserRepository.login(login: event.login, password: event.password);
         if (r != null) {
-          await UserRepository.persistTokenAndRefresh(Tuple2(r.refresh, r.access));
+          await UserRepository.persistAuthentication(r);
+          await MyDatabase.saveUser(r);
           yield AuthenticationAuthenticated(authentication: r);
         } else {
           yield AuthenticationInvalidCredentials(event.login);
@@ -41,7 +42,7 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
     }
     if (event is LoggedIn) {
       yield AuthenticationLoading();
-      await UserRepository.persistTokenAndRefresh(Tuple2(event.authentication.refresh, event.authentication.access));
+      await UserRepository.persistAuthentication(event.authentication);
       yield AuthenticationAuthenticated(authentication: event.authentication);
     }
     if (event is LoggedOut) {

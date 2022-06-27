@@ -4,8 +4,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oldtimers_rally_app/authentication/authentication.dart';
 import 'package:oldtimers_rally_app/model/event.dart';
-import 'package:oldtimers_rally_app/ui/screens/events_screen/events_screen.dart';
 import 'package:oldtimers_rally_app/utils/data_repository.dart';
+import 'package:oldtimers_rally_app/utils/my_database.dart';
+
+import '../competitions_screen/competitions_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -43,7 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => EventsScreen(
+                          builder: (context) => CompetitionsScreen(
                                 event: event,
                               )));
                 },
@@ -70,14 +72,20 @@ class _HomeScreenState extends State<HomeScreen> {
             title: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 15),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text('Rallies'),
+                  TextButton(
+                      onPressed: () async {
+                        _downloadEventsList();
+                      },
+                      child: const Text('POBIERZ')),
+                  const Text('Rajdy'),
                   TextButton(
                       onPressed: () async {
                         authBloc.add(LoggedOut());
                       },
-                      child: const Text('Logout')),
+                      style: TextButton.styleFrom(primary: Colors.red),
+                      child: const Text('Wyloguj się')),
                 ],
               ),
             ),
@@ -111,10 +119,29 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _getEvents() async {
-    var temp = await DataRepository.getEvents(authBloc);
+    var temp = await MyDatabase.getListOfEvent(authBloc);
     setState(() {
       events = temp;
       isLoaded = true;
     });
+  }
+
+  void _downloadEventsList() async {
+    setState(() {
+      isLoaded = false;
+    });
+    List<Event> temp = [];
+    try {
+      temp = await DataRepository.getEvents(authBloc);
+      await MyDatabase.saveListOfEvents(temp, authBloc);
+    } on Exception catch (_) {
+      temp = events;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Brak Internetu, odświerzanie listy nie powiodło się')));
+    } finally {
+      setState(() {
+        events = temp;
+        isLoaded = true;
+      });
+    }
   }
 }

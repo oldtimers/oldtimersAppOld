@@ -8,7 +8,7 @@ import 'package:oldtimers_rally_app/ui/screens/welcome_screen/login_screen.dart'
 
 import 'authentication/authentication.dart';
 
-void main() {
+main() {
   Bloc.observer = SimpleBlocObserver();
   runApp(
     BlocProvider<AuthenticationBloc>(

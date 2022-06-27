@@ -12,6 +12,8 @@ import 'package:oldtimers_rally_app/utils/data_repository.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:sprintf/sprintf.dart';
 
+import '../../../utils/my_database.dart';
+
 class CustomScreen extends StatefulWidget {
   final Crew crew;
   final Competition competition;
@@ -26,17 +28,19 @@ class CustomScreen extends StatefulWidget {
 class _CustomScreenState extends State<CustomScreen> {
   late AuthenticationBloc authBloc;
   late FormGroup formGroup;
+  late List<CompetitionField> fields;
 
   @override
-  void initState() {
+  Future<void> initState() async {
     authBloc = BlocProvider.of<AuthenticationBloc>(context);
-    formGroup = generateFormGroup();
+    fields = await (await MyDatabase.getInstance()).competitionFieldDao.findCompetitionFieldsByCompetition(widget.competition.id);
+    formGroup = generateFormGroup(fields);
     super.initState();
   }
 
-  FormGroup generateFormGroup() {
+  FormGroup generateFormGroup(List<CompetitionField> fields) {
     final Map<String, FormControl> controls = Map.fromIterable(
-      widget.competition.fields,
+      fields,
       key: (competitionField) => (competitionField as CompetitionField).order.toString(),
       value: (competitionField) {
         switch ((competitionField as CompetitionField).type) {
@@ -57,7 +61,7 @@ class _CustomScreenState extends State<CustomScreen> {
   }
 
   List<Widget> generateFormFields() {
-    return widget.competition.fields.map((competitionField) {
+    return fields.map((competitionField) {
       switch (competitionField.type) {
         case FieldType.INT:
           return ReactiveTextField(
@@ -167,7 +171,7 @@ class _CustomScreenState extends State<CustomScreen> {
                 padding: EdgeInsets.only(left: 0.05 * width, right: 0.05 * width),
                 itemBuilder: (context, index) => generateFormFields()[index],
                 separatorBuilder: (_, __) => const SizedBox(height: 16),
-                itemCount: widget.competition.fields.length,
+                itemCount: fields.length,
               ),
               Padding(
                 padding: EdgeInsets.only(bottom: 0.01 * height),
@@ -243,16 +247,15 @@ class _ConfirmDialogState extends State<ConfirmDialog> {
               style: Theme.of(context).textTheme.subtitle1,
             ),
             actions: [
-              RaisedButton(
-                onPressed: sendData,
-                child: const Text("Yes"),
-              ),
-              RaisedButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text("No"),
-              )
-            ]
-          )
+                RaisedButton(
+                  onPressed: sendData,
+                  child: const Text("Yes"),
+                ),
+                RaisedButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text("No"),
+                )
+              ])
         : const Center(child: CircularProgressIndicator());
   }
 }

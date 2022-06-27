@@ -8,23 +8,27 @@ part of 'competition.dart';
 
 Competition _$CompetitionFromJson(Map<String, dynamic> json) => Competition(
       json['id'] as int,
+      json['eventId'] as int,
       json['name'] as String,
       json['description'] as String,
-      json['type'] as String,
+      $enumDecode(_$CompetitionTypeEnumMap, json['type']),
       (json['averageSpeed'] as num?)?.toDouble(),
-      (json['fields'] as List<dynamic>)
-          .map((e) => CompetitionField.fromJson(e as Map<String, dynamic>))
-          .toList(),
       json['possibleInvalid'] as bool,
     );
 
-Map<String, dynamic> _$CompetitionToJson(Competition instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$CompetitionToJson(Competition instance) => <String, dynamic>{
       'id': instance.id,
+      'eventId': instance.eventId,
       'name': instance.name,
       'description': instance.description,
-      'type': instance.type,
+      'type': _$CompetitionTypeEnumMap[instance.type],
       'averageSpeed': instance.averageSpeed,
-      'fields': instance.fields,
       'possibleInvalid': instance.possibleInvalid,
     };
+
+const _$CompetitionTypeEnumMap = {
+  CompetitionType.REGULAR_DRIVE: 'REGULAR_DRIVE',
+  CompetitionType.BEST_MIN: 'BEST_MIN',
+  CompetitionType.BEST_MAX: 'BEST_MAX',
+  CompetitionType.COUNTED: 'COUNTED',
+};

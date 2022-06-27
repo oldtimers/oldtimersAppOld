@@ -6,10 +6,13 @@ part 'authentication.g.dart';
 class Authentication {
   final String access;
   final String refresh;
+  final DateTime expirationDate;
   final String username;
+  final int userId;
 
-  factory Authentication.fromJson(Map<String, dynamic> json) =>
-      _$AuthenticationFromJson(json);
+  Authentication(this.access, this.refresh, this.expirationDate, this.username, this.userId);
 
-  Authentication(this.access, this.refresh, this.username);
+  Map<String, dynamic> toJson() => _$AuthenticationToJson(this);
+
+  factory Authentication.fromJson(Map<String, dynamic> json) => _$AuthenticationFromJson(json);
 }

@@ -5,19 +5,20 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oldtimers_rally_app/authentication/authentication.dart';
 import 'package:oldtimers_rally_app/model/competition.dart';
 import 'package:oldtimers_rally_app/model/event.dart';
-import 'package:oldtimers_rally_app/ui/screens/event_screen/event_screen.dart';
 import 'package:oldtimers_rally_app/utils/data_repository.dart';
 
-class EventsScreen extends StatefulWidget {
+import '../competition_screen/competition_screen.dart';
+
+class CompetitionsScreen extends StatefulWidget {
   final Event event;
 
-  const EventsScreen({Key? key, required this.event}) : super(key: key);
+  const CompetitionsScreen({Key? key, required this.event}) : super(key: key);
 
   @override
-  _EventsScreenState createState() => _EventsScreenState();
+  _CompetitionsScreenState createState() => _CompetitionsScreenState();
 }
 
-class _EventsScreenState extends State<EventsScreen> {
+class _CompetitionsScreenState extends State<CompetitionsScreen> {
   late AuthenticationBloc authBloc;
   late List<Competition> competitions;
   bool isLoaded = false;
@@ -46,7 +47,7 @@ class _EventsScreenState extends State<EventsScreen> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => EventScreen(
+                          builder: (context) => CompetitionScreen(
                                 event: widget.event,
                                 competition: competition,
                               )));

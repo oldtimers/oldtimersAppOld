@@ -5,18 +5,32 @@ import 'package:oldtimers_rally_app/model/competition.dart';
 import 'package:oldtimers_rally_app/model/event.dart';
 import 'package:oldtimers_rally_app/ui/screens/crew_qr_screen/crew_qr_screen.dart';
 import 'package:oldtimers_rally_app/ui/screens/score_screen/reg_end_screen.dart';
+import 'package:oldtimers_rally_app/utils/my_database.dart';
 
-class EventScreen extends StatefulWidget {
+import '../../../model/competition_field.dart';
+
+class CompetitionScreen extends StatefulWidget {
   final Event event;
   final Competition competition;
 
-  const EventScreen({Key? key, required this.event, required this.competition}) : super(key: key);
+  const CompetitionScreen({Key? key, required this.event, required this.competition}) : super(key: key);
 
   @override
-  _EventScreenState createState() => _EventScreenState();
+  _CompetitionScreenState createState() => _CompetitionScreenState();
 }
 
-class _EventScreenState extends State<EventScreen> {
+class _CompetitionScreenState extends State<CompetitionScreen> {
+  late List<CompetitionField> compFields;
+
+  @override
+  Future<void> initState() async {
+    if (widget.competition.type == CompetitionType.REGULAR_DRIVE) {
+      compFields = [];
+    } else {
+      compFields = await (await MyDatabase.getInstance()).competitionFieldDao.findCompetitionFieldsByCompetition(widget.competition.id);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([
@@ -24,7 +38,7 @@ class _EventScreenState extends State<EventScreen> {
       DeviceOrientation.portraitDown,
     ]);
 
-    if (widget.competition.type == 'REGULAR_DRIVE') {
+    if (widget.competition.type == CompetitionType.REGULAR_DRIVE) {
       return _regularDrive();
     } else {
       return _classic();
@@ -35,7 +49,6 @@ class _EventScreenState extends State<EventScreen> {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     List<Widget> fields = [];
-    var compFields = widget.competition.fields;
     for (var i = 0; i < compFields.length; i++) {
       fields.add(Container(
         child: Padding(

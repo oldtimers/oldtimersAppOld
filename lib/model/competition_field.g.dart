@@ -9,6 +9,7 @@ part of 'competition_field.dart';
 CompetitionField _$CompetitionFieldFromJson(Map<String, dynamic> json) =>
     CompetitionField(
       json['id'] as int,
+      json['competitionId'] as int,
       $enumDecode(_$FieldTypeEnumMap, json['type']),
       json['order'] as int,
       json['label'] as String,
@@ -17,6 +18,7 @@ CompetitionField _$CompetitionFieldFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$CompetitionFieldToJson(CompetitionField instance) =>
     <String, dynamic>{
       'id': instance.id,
+      'competitionId': instance.competitionId,
       'type': _$FieldTypeEnumMap[instance.type],
       'order': instance.order,
       'label': instance.label,
