@@ -70,7 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             title: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15),
+              padding: const EdgeInsets.symmetric(horizontal: 5),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -136,7 +136,7 @@ class _HomeScreenState extends State<HomeScreen> {
       await MyDatabase.saveListOfEvents(temp, authBloc);
     } on Exception catch (_) {
       temp = events;
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Brak Internetu, odświerzanie listy nie powiodło się')));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Brak Internetu, odświeżanie listy nie powiodło się')));
     } finally {
       setState(() {
         events = temp;

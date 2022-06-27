@@ -216,6 +216,18 @@ class _$UserEventDao extends UserEventDao {
   Future<void> deleteUserEvents(List<UserEvent> userEvents) async {
     await _userEventDeletionAdapter.deleteList(userEvents);
   }
+
+  @override
+  Future<void> replaceListOfConnections(List<Event> temp, int userId) async {
+    if (database is sqflite.Transaction) {
+      await super.replaceListOfConnections(temp, userId);
+    } else {
+      await (database as sqflite.Database).transaction<void>((transaction) async {
+        final transactionDatabase = _$FlutterDatabase(changeListener)..database = transaction;
+        await transactionDatabase.userEventDao.replaceListOfConnections(temp, userId);
+      });
+    }
+  }
 }
 
 class _$EventDao extends EventDao {
@@ -319,6 +331,18 @@ class _$EventDao extends EventDao {
   Future<void> deleteEvent(Event event) async {
     await _eventDeletionAdapter.delete(event);
   }
+
+  @override
+  Future<void> saveListOfEvents(List<Event> events) async {
+    if (database is sqflite.Transaction) {
+      await super.saveListOfEvents(events);
+    } else {
+      await (database as sqflite.Database).transaction<void>((transaction) async {
+        final transactionDatabase = _$FlutterDatabase(changeListener)..database = transaction;
+        await transactionDatabase.eventDao.saveListOfEvents(events);
+      });
+    }
+  }
 }
 
 class _$CompetitionDao extends CompetitionDao {
@@ -376,6 +400,18 @@ class _$CompetitionDao extends CompetitionDao {
   @override
   Future<void> deleteCompetitions(List<Competition> competitions) async {
     await _competitionDeletionAdapter.deleteList(competitions);
+  }
+
+  @override
+  Future<void> synchronizeCompetitions(List<Competition> competitions, int eventId) async {
+    if (database is sqflite.Transaction) {
+      await super.synchronizeCompetitions(competitions, eventId);
+    } else {
+      await (database as sqflite.Database).transaction<void>((transaction) async {
+        final transactionDatabase = _$FlutterDatabase(changeListener)..database = transaction;
+        await transactionDatabase.competitionDao.synchronizeCompetitions(competitions, eventId);
+      });
+    }
   }
 }
 

@@ -7,6 +7,7 @@ import 'package:oldtimers_rally_app/model/competition.dart';
 import 'package:oldtimers_rally_app/model/event.dart';
 import 'package:oldtimers_rally_app/utils/data_repository.dart';
 
+import '../../../utils/my_database.dart';
 import '../competition_screen/competition_screen.dart';
 
 class CompetitionsScreen extends StatefulWidget {
@@ -73,11 +74,16 @@ class _CompetitionsScreenState extends State<CompetitionsScreen> {
               ),
             ),
             title: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15),
+              padding: const EdgeInsets.symmetric(horizontal: 5),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
-                children: const [
-                  Text('Competitions'),
+                children: [
+                  TextButton(
+                      onPressed: () async {
+                        _synchronizeEvent(widget.event);
+                      },
+                      child: const Text('SYNCHRONIZUJ')),
+                  const Text('Konkurencje'),
                 ],
               ),
             ),
@@ -116,10 +122,28 @@ class _CompetitionsScreenState extends State<CompetitionsScreen> {
   }
 
   void _getCompetitions(Event event) async {
-    var temp = await DataRepository.getCompetitions(event, authBloc);
+    var temp = await MyDatabase.getCompetitions(event, authBloc);
     setState(() {
       competitions = temp;
       isLoaded = true;
     });
+  }
+
+  void _synchronizeEvent(Event event) async {
+    setState(() {
+      isLoaded = false;
+    });
+    List<Competition> temp = [];
+    try {
+      temp = await DataRepository.synchronizeEvent(event, authBloc);
+    } on Exception catch (_) {
+      temp = competitions;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Brak Internetu, odświeżanie listy nie powiodło się')));
+    } finally {
+      setState(() {
+        competitions = temp;
+        isLoaded = true;
+      });
+    }
   }
 }

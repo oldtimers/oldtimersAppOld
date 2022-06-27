@@ -17,8 +17,7 @@ Crew _$CrewFromJson(Map<String, dynamic> json) => Crew(
       json['eventId'] as String,
     );
 
-Map<String, dynamic> _$CrewToJson(Crew instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$CrewToJson(Crew instance) => <String, dynamic>{
       'id': instance.id,
       'number': instance.number,
       'yearOfProduction': instance.yearOfProduction,

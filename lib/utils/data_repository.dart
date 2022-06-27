@@ -3,10 +3,13 @@ import 'dart:convert';
 import 'package:oldtimers_rally_app/authentication/authentication.dart';
 import 'package:oldtimers_rally_app/const.dart';
 import 'package:oldtimers_rally_app/model/competition.dart';
+import 'package:oldtimers_rally_app/model/competition_field.dart';
 import 'package:oldtimers_rally_app/model/crew.dart';
 import 'package:oldtimers_rally_app/model/event.dart';
+import 'package:oldtimers_rally_app/utils/my_database.dart';
 import 'package:oldtimers_rally_app/utils/server_connector.dart';
 import 'package:sprintf/sprintf.dart';
+import 'package:tuple/tuple.dart';
 
 class DataRepository {
   static Future<List<Event>> getEvents(AuthenticationBloc authBloc) async {
@@ -16,11 +19,17 @@ class DataRepository {
     return events;
   }
 
-  static Future<List<Competition>> getCompetitions(Event event, AuthenticationBloc authBloc) async {
+  static Future<Tuple2<List<Competition>, List<CompetitionField>>> getCompetitions(Event event, AuthenticationBloc authBloc) async {
     var response = await ServerConnector.makeRequest(sprintf(kCompetitions, [event.id]), authBloc, requestType.GET);
     Iterable l = json.decode(utf8.decode(response.bodyBytes));
     List<Competition> competitions = List<Competition>.from(l.map((model) => Competition.fromJson(model)));
-    return competitions;
+    List<CompetitionField> competitionFields = [];
+    for (var row in l) {
+      for (var field in row['fields']) {
+        competitionFields.add(CompetitionField.fromJson(field));
+      }
+    }
+    return Tuple2(competitions, competitionFields);
   }
 
   static Future<Crew?> getCrew(String qr, Event event, AuthenticationBloc authBloc) async {
@@ -52,5 +61,12 @@ class DataRepository {
   static setResultOnRegEnd(DateTime time, int crewID, int competitionID, int eventId, AuthenticationBloc authBloc) async {
     var body = jsonEncode(<String, dynamic>{'position': 'END', 'crewId': crewID, 'competitionId': competitionID, 'time': time.millisecondsSinceEpoch});
     var response = await ServerConnector.makeRequest(sprintf(kScoreReg, [eventId]), authBloc, requestType.POST, body: body);
+  }
+
+  static Future<List<Competition>> synchronizeEvent(Event event, AuthenticationBloc authBloc) async {
+    var data = await getCompetitions(event, authBloc);
+    MyDatabase.synchronizeCompetitions(data.item1, data.item2, event);
+    return data.item1;
+    // List<CompetitionField> competitionFields = competitions.map((e) => )
   }
 }

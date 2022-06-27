@@ -17,8 +17,7 @@ Event _$EventFromJson(Map<String, dynamic> json) => Event(
       json['endDate'] == null ? null : DateTime.parse(json['endDate'] as String),
     );
 
-Map<String, dynamic> _$EventToJson(Event instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
       'description': instance.description,

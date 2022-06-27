@@ -1,10 +1,11 @@
-import 'package:floor/floor.dart';
 import 'package:oldtimers_rally_app/authentication/authentication.dart';
 import 'package:oldtimers_rally_app/model/authentication.dart';
+import 'package:oldtimers_rally_app/model/competition.dart';
 import 'package:oldtimers_rally_app/model/event.dart';
 import 'package:oldtimers_rally_app/model/user.dart';
 import 'package:oldtimers_rally_app/model/user_event.dart';
 
+import '../model/competition_field.dart';
 import 'database_impl.dart';
 
 class MyDatabase {
@@ -33,21 +34,24 @@ class MyDatabase {
     }
   }
 
-  @transaction
   static Future<void> saveListOfEvents(List<Event> temp, AuthenticationBloc authBloc) async {
     var db = await getInstance();
     var auth = _retrieveAuthentication(authBloc);
     var old = await db.userEventDao.findAllByUser(auth.userId);
     await db.userEventDao.deleteUserEvents(old);
     List<UserEvent> userEvents = [];
-    for (var value in temp) {
-      if ((await db.eventDao.findById(value.id)) == null) {
-        await db.eventDao.insertEvent(value);
-      } else {
-        await db.eventDao.updateEvent(value);
-      }
-      userEvents.add(UserEvent(auth.userId, value.id));
-    }
     await db.userEventDao.insertUserEvents(userEvents);
+    await db.userEventDao.replaceListOfConnections(temp, auth.userId);
+  }
+
+  static Future<List<Competition>> getCompetitions(Event event, AuthenticationBloc authBloc) async {
+    var db = await getInstance();
+    return db.competitionDao.findCompetitionsByEvent(event.id);
+  }
+
+  static Future<void> synchronizeCompetitions(List<Competition> competitions, List<CompetitionField> competitionFields, Event event) async {
+    var db = await getInstance();
+    await db.competitionDao.synchronizeCompetitions(competitions, event.id);
+    await db.competitionFieldDao.insertCompetitionFields(competitionFields);
   }
 }

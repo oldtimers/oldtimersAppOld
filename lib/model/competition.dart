@@ -18,15 +18,16 @@ class Competition {
   final String description;
   final CompetitionType type;
   final double? averageSpeed;
-
-  // final List<CompetitionField> fields;
   final bool possibleInvalid;
+
+  // @ignore
+  // List<CompetitionField>? fields;
 
   Competition(this.id, this.eventId, this.name, this.description, this.type, this.averageSpeed, this.possibleInvalid);
 
   factory Competition.fromJson(Map<String, dynamic> json) {
     var res = _$CompetitionFromJson(json);
-    // res.fields.sort((a, b) => a.order.compareTo(b.order));
+    // res.fields!.sort((a, b) => a.order.compareTo(b.order));
     return res;
   }
 }
