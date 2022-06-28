@@ -6,6 +6,7 @@ String kEvents = '/api/event/';
 String kEvent = '/api/event/%d/';
 String kCompetitions = '/api/event/%d/competition/';
 String kCrew = '/api/event/%d/crew/';
+String kCrews = '/api/event/%d/crews/';
 String kScoreReg = '/api/event/%d/score/reg/';
 String kCrewsInCompetition = '/api/event/%d/competition/%d/crews';
 String kScore = '/api/event/%d/score/';

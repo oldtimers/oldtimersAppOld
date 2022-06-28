@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oldtimers_rally_app/authentication/authentication.dart';
 import 'package:oldtimers_rally_app/model/competition.dart';
+import 'package:oldtimers_rally_app/model/competition_field.dart';
 import 'package:oldtimers_rally_app/model/event.dart';
 import 'package:oldtimers_rally_app/utils/data_repository.dart';
 
@@ -20,6 +21,7 @@ class CompetitionsScreen extends StatefulWidget {
 }
 
 class _CompetitionsScreenState extends State<CompetitionsScreen> {
+  final GlobalKey<ScaffoldState> scaffold = GlobalKey<ScaffoldState>();
   late AuthenticationBloc authBloc;
   late List<Competition> competitions;
   bool isLoaded = false;
@@ -33,85 +35,83 @@ class _CompetitionsScreenState extends State<CompetitionsScreen> {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
 
-    if (isLoaded) {
-      List<Center> eventWidgets = [];
-      for (Competition competition in competitions) {
-        eventWidgets.add(Center(
-          child: Padding(
-            padding: EdgeInsets.only(bottom: 0.05 * height),
-            child: FlatButton(
-                color: Colors.black,
-                textColor: Colors.white,
-                splashColor: Colors.blueAccent,
-                padding: const EdgeInsets.all(30),
-                onPressed: () async {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => CompetitionScreen(
-                                event: widget.event,
-                                competition: competition,
-                              )));
-                },
-                child: Text(
-                  competition.name,
-                  style: const TextStyle(fontSize: 20.0),
-                )),
-          ),
-        ));
-      }
-
-      return MaterialApp(
-        home: Scaffold(
-          appBar: AppBar(
-            backgroundColor: Colors.black,
-            leadingWidth: 100,
-            leading: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15),
-              child: Image.asset(
-                'resources/OLDTIMERS-WEB LOGO.png',
-                fit: BoxFit.contain,
-              ),
-            ),
-            title: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 5),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  TextButton(
-                      onPressed: () async {
-                        _synchronizeEvent(widget.event);
-                      },
-                      child: const Text('SYNCHRONIZUJ')),
-                  const Text('Konkurencje'),
-                ],
-              ),
-            ),
-            centerTitle: true,
-          ),
-          body: Container(
-            decoration: const BoxDecoration(image: DecorationImage(image: AssetImage('resources/effi_background.jpg'), fit: BoxFit.cover)),
-            width: width,
-            height: height,
-            child: ListView(
-              shrinkWrap: true,
-              padding: const EdgeInsets.all(15.0),
-              scrollDirection: Axis.vertical,
-              children: ([
-                    Center(
-                      child: Text(widget.event.name),
-                    )
-                  ]) +
-                  eventWidgets,
+    return MaterialApp(
+      home: Scaffold(
+        key: scaffold,
+        appBar: AppBar(
+          backgroundColor: Colors.black,
+          leadingWidth: 100,
+          leading: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: Image.asset(
+              'resources/OLDTIMERS-WEB LOGO.png',
+              fit: BoxFit.contain,
             ),
           ),
+          title: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 5),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                    onPressed: () async {
+                      _synchronizeEvent(widget.event);
+                    },
+                    child: const Text('SYNCHRONIZUJ')),
+                const Text('Konkurencje'),
+              ],
+            ),
+          ),
+          centerTitle: true,
         ),
-      );
-    } else {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
-    }
+        body: Container(
+          decoration: const BoxDecoration(image: DecorationImage(image: AssetImage('resources/effi_background.jpg'), fit: BoxFit.cover)),
+          width: width,
+          height: height,
+          child: isLoaded
+              ? ListView(
+                  shrinkWrap: true,
+                  padding: const EdgeInsets.all(15.0),
+                  scrollDirection: Axis.vertical,
+                  children: ([
+                        Center(
+                          child: Text(widget.event.name),
+                        )
+                      ]) +
+                      competitions
+                          .map((competition) => Center(
+                                child: Padding(
+                                  padding: EdgeInsets.only(bottom: 0.05 * height),
+                                  child: FlatButton(
+                                      color: Colors.black,
+                                      textColor: Colors.white,
+                                      splashColor: Colors.blueAccent,
+                                      padding: const EdgeInsets.all(30),
+                                      onPressed: () async {
+                                        List<CompetitionField> fields = await MyDatabase.getCompetitionFields(competition);
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => CompetitionScreen(
+                                                      event: widget.event,
+                                                      competition: competition,
+                                                      competitionFields: fields,
+                                                    )));
+                                      },
+                                      child: Text(
+                                        competition.name,
+                                        style: const TextStyle(fontSize: 20.0),
+                                      )),
+                                ),
+                              ))
+                          .toList(),
+                )
+              : const Center(
+                  child: CircularProgressIndicator(),
+                ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -136,9 +136,14 @@ class _CompetitionsScreenState extends State<CompetitionsScreen> {
     List<Competition> temp = [];
     try {
       temp = await DataRepository.synchronizeEvent(event, authBloc);
+      if (scaffold.currentState != null) {
+        scaffold.currentState!.showSnackBar(const SnackBar(content: Text('Pomyślnie dokonano synchronizacji')));
+      }
     } on Exception catch (_) {
       temp = competitions;
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Brak Internetu, odświeżanie listy nie powiodło się')));
+      if (scaffold.currentState != null) {
+        scaffold.currentState!.showSnackBar(const SnackBar(content: Text('Brak Internetu, synchronizacja nie powiodła się')));
+      }
     } finally {
       setState(() {
         competitions = temp;

@@ -11,11 +11,4 @@ abstract class CompetitionDao {
 
   @delete
   Future<void> deleteCompetitions(List<Competition> competitions);
-
-  @transaction
-  Future<void> synchronizeCompetitions(List<Competition> competitions, int eventId) async {
-    var old = await findCompetitionsByEvent(eventId);
-    await deleteCompetitions(old);
-    await insertCompetitions(competitions);
-  }
 }

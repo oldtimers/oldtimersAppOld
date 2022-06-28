@@ -19,7 +19,7 @@ class Crew {
   final String car;
   final String driverName;
   final String qr;
-  final String eventId;
+  final int eventId;
 
   Crew(this.id, this.number, this.yearOfProduction, this.phone, this.car, this.driverName, this.qr, this.eventId);
 

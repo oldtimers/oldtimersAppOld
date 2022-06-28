@@ -54,8 +54,8 @@ class DataRepository {
   static getCrewsInRegCompetition(AuthenticationBloc authBloc, int eventId, int competitionId) async {
     var response = await ServerConnector.makeRequest(sprintf(kCrewsInCompetition, [eventId, competitionId]), authBloc, requestType.GET);
     Iterable l = json.decode(utf8.decode(response.bodyBytes));
-    List<Crew> events = List<Crew>.from(l.map((model) => Crew.fromJson(model)));
-    return events;
+    List<Crew> crews = List<Crew>.from(l.map((model) => Crew.fromJson(model)));
+    return crews;
   }
 
   static setResultOnRegEnd(DateTime time, int crewID, int competitionID, int eventId, AuthenticationBloc authBloc) async {
@@ -64,9 +64,18 @@ class DataRepository {
   }
 
   static Future<List<Competition>> synchronizeEvent(Event event, AuthenticationBloc authBloc) async {
-    var data = await getCompetitions(event, authBloc);
-    MyDatabase.synchronizeCompetitions(data.item1, data.item2, event);
-    return data.item1;
-    // List<CompetitionField> competitionFields = competitions.map((e) => )
+    var d1 = await getCompetitions(event, authBloc);
+    await MyDatabase.synchronizeCompetitions(d1.item1, d1.item2, event);
+    var d2 = await getCrews(event, authBloc);
+    await MyDatabase.synchronizeCrews(d2, event);
+    return d1.item1;
+  }
+
+  static Future<List<Crew>> getCrews(Event event, AuthenticationBloc authBloc) async {
+    var response =
+        await ServerConnector.makeRequest(sprintf(kCrews, [event.id]), authBloc, requestType.POST, statusCode: {200}, body: jsonEncode({"eventId": event.id}));
+    Iterable l = json.decode(utf8.decode(response.bodyBytes));
+    List<Crew> crews = List<Crew>.from(l.map((model) => Crew.fromJson(model)));
+    return crews;
   }
 }

@@ -73,7 +73,7 @@ class _$FlutterDatabase extends FlutterDatabase {
 
   Future<sqflite.Database> open(String path, List<Migration> migrations, [Callback? callback]) async {
     final databaseOptions = sqflite.OpenDatabaseOptions(
-      version: 1,
+      version: 3,
       onConfigure: (database) async {
         await database.execute('PRAGMA foreign_keys = ON');
         await callback?.onConfigure?.call(database);
@@ -97,7 +97,7 @@ class _$FlutterDatabase extends FlutterDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `CompetitionField` (`id` INTEGER NOT NULL, `competitionId` INTEGER NOT NULL, `type` TEXT NOT NULL, `order_f` INTEGER NOT NULL, `label` TEXT NOT NULL, FOREIGN KEY (`competitionId`) REFERENCES `Competition` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE, PRIMARY KEY (`id`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `Crew` (`id` INTEGER NOT NULL, `number` INTEGER NOT NULL, `yearOfProduction` INTEGER NOT NULL, `phone` TEXT NOT NULL, `car` TEXT NOT NULL, `driverName` TEXT NOT NULL, `qr` TEXT NOT NULL, `eventId` TEXT NOT NULL, FOREIGN KEY (`eventId`) REFERENCES `Event` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION, PRIMARY KEY (`id`))');
+            'CREATE TABLE IF NOT EXISTS `Crew` (`id` INTEGER NOT NULL, `number` INTEGER NOT NULL, `yearOfProduction` INTEGER NOT NULL, `phone` TEXT NOT NULL, `car` TEXT NOT NULL, `driverName` TEXT NOT NULL, `qr` TEXT NOT NULL, `eventId` INTEGER NOT NULL, FOREIGN KEY (`eventId`) REFERENCES `Event` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION, PRIMARY KEY (`id`))');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `Result` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `eventId` INTEGER NOT NULL, `userId` INTEGER NOT NULL, `body` TEXT NOT NULL)');
         await database.execute('CREATE UNIQUE INDEX `index_Crew_qr` ON `Crew` (`qr`)');
@@ -216,18 +216,6 @@ class _$UserEventDao extends UserEventDao {
   Future<void> deleteUserEvents(List<UserEvent> userEvents) async {
     await _userEventDeletionAdapter.deleteList(userEvents);
   }
-
-  @override
-  Future<void> replaceListOfConnections(List<Event> temp, int userId) async {
-    if (database is sqflite.Transaction) {
-      await super.replaceListOfConnections(temp, userId);
-    } else {
-      await (database as sqflite.Database).transaction<void>((transaction) async {
-        final transactionDatabase = _$FlutterDatabase(changeListener)..database = transaction;
-        await transactionDatabase.userEventDao.replaceListOfConnections(temp, userId);
-      });
-    }
-  }
 }
 
 class _$EventDao extends EventDao {
@@ -331,18 +319,6 @@ class _$EventDao extends EventDao {
   Future<void> deleteEvent(Event event) async {
     await _eventDeletionAdapter.delete(event);
   }
-
-  @override
-  Future<void> saveListOfEvents(List<Event> events) async {
-    if (database is sqflite.Transaction) {
-      await super.saveListOfEvents(events);
-    } else {
-      await (database as sqflite.Database).transaction<void>((transaction) async {
-        final transactionDatabase = _$FlutterDatabase(changeListener)..database = transaction;
-        await transactionDatabase.eventDao.saveListOfEvents(events);
-      });
-    }
-  }
 }
 
 class _$CompetitionDao extends CompetitionDao {
@@ -400,18 +376,6 @@ class _$CompetitionDao extends CompetitionDao {
   @override
   Future<void> deleteCompetitions(List<Competition> competitions) async {
     await _competitionDeletionAdapter.deleteList(competitions);
-  }
-
-  @override
-  Future<void> synchronizeCompetitions(List<Competition> competitions, int eventId) async {
-    if (database is sqflite.Transaction) {
-      await super.synchronizeCompetitions(competitions, eventId);
-    } else {
-      await (database as sqflite.Database).transaction<void>((transaction) async {
-        final transactionDatabase = _$FlutterDatabase(changeListener)..database = transaction;
-        await transactionDatabase.competitionDao.synchronizeCompetitions(competitions, eventId);
-      });
-    }
   }
 }
 
@@ -511,20 +475,28 @@ class _$CrewDao extends CrewDao {
   final DeletionAdapter<Crew> _crewDeletionAdapter;
 
   @override
-  Future<List<Crew>> findCompetitionsByEvent(int eventId) async {
+  Future<List<Crew>> findCrewsByEvent(int eventId) async {
     return _queryAdapter.queryList('select * from Crew where eventId = ?1 order by number',
         mapper: (Map<String, Object?> row) => Crew(row['id'] as int, row['number'] as int, row['yearOfProduction'] as int, row['phone'] as String,
-            row['car'] as String, row['driverName'] as String, row['qr'] as String, row['eventId'] as String),
+            row['car'] as String, row['driverName'] as String, row['qr'] as String, row['eventId'] as int),
         arguments: [eventId]);
   }
 
   @override
-  Future<void> insertCompetitions(List<Crew> crews) async {
+  Future<Crew?> findCrewByQr(String qr, int eventId) async {
+    return _queryAdapter.query('select * from Crew where qr = ?1 and eventId = ?2',
+        mapper: (Map<String, Object?> row) => Crew(row['id'] as int, row['number'] as int, row['yearOfProduction'] as int, row['phone'] as String,
+            row['car'] as String, row['driverName'] as String, row['qr'] as String, row['eventId'] as int),
+        arguments: [qr, eventId]);
+  }
+
+  @override
+  Future<void> insertCrews(List<Crew> crews) async {
     await _crewInsertionAdapter.insertList(crews, OnConflictStrategy.abort);
   }
 
   @override
-  Future<void> deleteCompetitions(List<Crew> crews) async {
+  Future<void> deleteCrews(List<Crew> crews) async {
     await _crewDeletionAdapter.deleteList(crews);
   }
 }

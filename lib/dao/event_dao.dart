@@ -18,15 +18,4 @@ abstract class EventDao {
 
   @delete
   Future<void> deleteEvent(Event event);
-
-  @transaction
-  Future<void> saveListOfEvents(List<Event> events) async {
-    for (var value in events) {
-      if ((await findById(value.id)) == null) {
-        await insertEvent(value);
-      } else {
-        await updateEvent(value);
-      }
-    }
-  }
 }

@@ -23,7 +23,7 @@ import '../model/user_event.dart';
 
 part 'database_impl.g.dart';
 
-@Database(version: 1, entities: [User, UserEvent, Event, Competition, CompetitionField, Crew, Result])
+@Database(version: 3, entities: [User, UserEvent, Event, Competition, CompetitionField, Crew, Result])
 abstract class FlutterDatabase extends FloorDatabase {
   UserDao get userDao;
 

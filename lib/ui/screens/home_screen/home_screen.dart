@@ -17,6 +17,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final GlobalKey<ScaffoldState> scaffold = GlobalKey<ScaffoldState>();
   late AuthenticationBloc authBloc;
   late List<Event> events;
   bool isLoaded = false;
@@ -29,86 +30,81 @@ class _HomeScreenState extends State<HomeScreen> {
     ]);
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-
-    if (isLoaded) {
-      List<Widget> eventWidgets = [];
-      for (Event event in events) {
-        eventWidgets.add(Center(
-          child: Padding(
-            padding: EdgeInsets.only(bottom: 0.05 * height),
-            child: FlatButton(
-                color: Colors.black,
-                textColor: Colors.white,
-                splashColor: Colors.blueAccent,
-                padding: const EdgeInsets.all(30),
-                onPressed: () async {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => CompetitionsScreen(
-                                event: event,
-                              )));
-                },
-                child: Text(
-                  event.name,
-                  style: const TextStyle(fontSize: 20.0),
-                )),
-          ),
-        ));
-      }
-
-      return MaterialApp(
-        home: Scaffold(
-          appBar: AppBar(
-            backgroundColor: Colors.black,
-            leadingWidth: 100,
-            leading: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15),
-              child: Image.asset(
-                'resources/OLDTIMERS-WEB LOGO.png',
-                fit: BoxFit.contain,
-              ),
-            ),
-            title: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 5),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  TextButton(
-                      onPressed: () async {
-                        _downloadEventsList();
-                      },
-                      child: const Text('POBIERZ')),
-                  const Text('Rajdy'),
-                  TextButton(
-                      onPressed: () async {
-                        authBloc.add(LoggedOut());
-                      },
-                      style: TextButton.styleFrom(primary: Colors.red),
-                      child: const Text('Wyloguj się')),
-                ],
-              ),
-            ),
-            centerTitle: true,
-          ),
-          body: Container(
-            decoration: const BoxDecoration(image: DecorationImage(image: AssetImage('resources/background_main_photo.jpg'), fit: BoxFit.cover)),
-            width: width,
-            height: height,
-            child: ListView(
-              shrinkWrap: true,
-              padding: const EdgeInsets.all(15.0),
-              scrollDirection: Axis.vertical,
-              children: eventWidgets,
+    return MaterialApp(
+      home: Scaffold(
+        key: scaffold,
+        appBar: AppBar(
+          backgroundColor: Colors.black,
+          leadingWidth: 100,
+          leading: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: Image.asset(
+              'resources/OLDTIMERS-WEB LOGO.png',
+              fit: BoxFit.contain,
             ),
           ),
+          title: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 5),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TextButton(
+                    onPressed: () async {
+                      _downloadEventsList();
+                    },
+                    child: const Text('POBIERZ')),
+                const Text('Rajdy'),
+                TextButton(
+                    onPressed: () async {
+                      authBloc.add(LoggedOut());
+                    },
+                    style: TextButton.styleFrom(primary: Colors.red),
+                    child: const Text('Wyloguj się')),
+              ],
+            ),
+          ),
+          centerTitle: true,
         ),
-      );
-    } else {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
-    }
+        body: Container(
+          decoration: const BoxDecoration(image: DecorationImage(image: AssetImage('resources/background_main_photo.jpg'), fit: BoxFit.cover)),
+          width: width,
+          height: height,
+          child: isLoaded
+              ? ListView(
+                  shrinkWrap: true,
+                  padding: const EdgeInsets.all(15.0),
+                  scrollDirection: Axis.vertical,
+                  children: events
+                      .map((event) => Center(
+                            child: Padding(
+                              padding: EdgeInsets.only(bottom: 0.05 * height),
+                              child: FlatButton(
+                                  color: Colors.black,
+                                  textColor: Colors.white,
+                                  splashColor: Colors.blueAccent,
+                                  padding: const EdgeInsets.all(30),
+                                  onPressed: () async {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => CompetitionsScreen(
+                                                  event: event,
+                                                )));
+                                  },
+                                  child: Text(
+                                    event.name,
+                                    style: const TextStyle(fontSize: 20.0),
+                                  )),
+                            ),
+                          ))
+                      .toList(),
+                )
+              : const Center(
+                  child: CircularProgressIndicator(),
+                ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -134,9 +130,14 @@ class _HomeScreenState extends State<HomeScreen> {
     try {
       temp = await DataRepository.getEvents(authBloc);
       await MyDatabase.saveListOfEvents(temp, authBloc);
+      if (scaffold.currentState != null) {
+        scaffold.currentState!.showSnackBar(const SnackBar(content: Text('Pomyślnie pobrano listę')));
+      }
     } on Exception catch (_) {
       temp = events;
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Brak Internetu, odświeżanie listy nie powiodło się')));
+      if (scaffold.currentState != null) {
+        scaffold.currentState!.showSnackBar(const SnackBar(content: Text('Brak Internetu, odświeżanie listy nie powiodło się')));
+      }
     } finally {
       setState(() {
         events = temp;

@@ -5,31 +5,29 @@ import 'package:oldtimers_rally_app/model/competition.dart';
 import 'package:oldtimers_rally_app/model/event.dart';
 import 'package:oldtimers_rally_app/ui/screens/crew_qr_screen/crew_qr_screen.dart';
 import 'package:oldtimers_rally_app/ui/screens/score_screen/reg_end_screen.dart';
-import 'package:oldtimers_rally_app/utils/my_database.dart';
 
 import '../../../model/competition_field.dart';
 
 class CompetitionScreen extends StatefulWidget {
   final Event event;
   final Competition competition;
+  final List<CompetitionField> competitionFields;
 
-  const CompetitionScreen({Key? key, required this.event, required this.competition}) : super(key: key);
+  const CompetitionScreen({Key? key, required this.event, required this.competition, required this.competitionFields}) : super(key: key);
 
   @override
   _CompetitionScreenState createState() => _CompetitionScreenState();
 }
 
 class _CompetitionScreenState extends State<CompetitionScreen> {
-  late List<CompetitionField> compFields;
-
-  @override
-  Future<void> initState() async {
-    if (widget.competition.type == CompetitionType.REGULAR_DRIVE) {
-      compFields = [];
-    } else {
-      compFields = await (await MyDatabase.getInstance()).competitionFieldDao.findCompetitionFieldsByCompetition(widget.competition.id);
-    }
-  }
+  // @override
+  // Future<void> initState() async {
+  //   if (widget.competition.type == CompetitionType.REGULAR_DRIVE) {
+  //     compFields = [];
+  //   } else {
+  //     compFields = await (await MyDatabase.getInstance()).competitionFieldDao.findCompetitionFieldsByCompetition(widget.competition.id);
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -49,12 +47,12 @@ class _CompetitionScreenState extends State<CompetitionScreen> {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     List<Widget> fields = [];
-    for (var i = 0; i < compFields.length; i++) {
+    for (var i = 0; i < widget.competitionFields.length; i++) {
       fields.add(Container(
         child: Padding(
           padding: const EdgeInsets.all(10.0),
           child: Text(
-            compFields[i].label,
+            widget.competitionFields[i].label,
             textAlign: TextAlign.center,
             style: const TextStyle(fontSize: 20.0, color: Colors.white),
           ),
@@ -74,7 +72,7 @@ class _CompetitionScreenState extends State<CompetitionScreen> {
           color: Colors.black,
         ));
       }
-      if (i < compFields.length - 1) {
+      if (i < widget.competitionFields.length - 1) {
         fields.add(SizedBox(
           height: height * 0.01,
         ));

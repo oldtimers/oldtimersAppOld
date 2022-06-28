@@ -12,14 +12,13 @@ import 'package:oldtimers_rally_app/utils/data_repository.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 import 'package:sprintf/sprintf.dart';
 
-import '../../../utils/my_database.dart';
-
 class CustomScreen extends StatefulWidget {
   final Crew crew;
   final Competition competition;
   final Event event;
+  final List<CompetitionField> fields;
 
-  const CustomScreen({Key? key, required this.crew, required this.competition, required this.event}) : super(key: key);
+  const CustomScreen({Key? key, required this.crew, required this.competition, required this.event, required this.fields}) : super(key: key);
 
   @override
   _CustomScreenState createState() => _CustomScreenState();
@@ -28,13 +27,11 @@ class CustomScreen extends StatefulWidget {
 class _CustomScreenState extends State<CustomScreen> {
   late AuthenticationBloc authBloc;
   late FormGroup formGroup;
-  late List<CompetitionField> fields;
 
   @override
-  Future<void> initState() async {
+  void initState() {
     authBloc = BlocProvider.of<AuthenticationBloc>(context);
-    fields = await (await MyDatabase.getInstance()).competitionFieldDao.findCompetitionFieldsByCompetition(widget.competition.id);
-    formGroup = generateFormGroup(fields);
+    formGroup = generateFormGroup(widget.fields);
     super.initState();
   }
 
@@ -61,7 +58,7 @@ class _CustomScreenState extends State<CustomScreen> {
   }
 
   List<Widget> generateFormFields() {
-    return fields.map((competitionField) {
+    return widget.fields.map((competitionField) {
       switch (competitionField.type) {
         case FieldType.INT:
           return ReactiveTextField(
@@ -171,7 +168,7 @@ class _CustomScreenState extends State<CustomScreen> {
                 padding: EdgeInsets.only(left: 0.05 * width, right: 0.05 * width),
                 itemBuilder: (context, index) => generateFormFields()[index],
                 separatorBuilder: (_, __) => const SizedBox(height: 16),
-                itemCount: fields.length,
+                itemCount: widget.fields.length,
               ),
               Padding(
                 padding: EdgeInsets.only(bottom: 0.01 * height),

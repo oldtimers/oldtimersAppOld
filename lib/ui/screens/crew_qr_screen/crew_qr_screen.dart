@@ -8,7 +8,7 @@ import 'package:oldtimers_rally_app/model/crew.dart';
 import 'package:oldtimers_rally_app/model/event.dart';
 import 'package:oldtimers_rally_app/ui/screens/score_screen/custom_screen.dart';
 import 'package:oldtimers_rally_app/ui/screens/score_screen/reg_start_screen.dart';
-import 'package:oldtimers_rally_app/utils/data_repository.dart';
+import 'package:oldtimers_rally_app/utils/my_database.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 class CrewQrScreen extends StatefulWidget {
@@ -78,8 +78,8 @@ class _CrewQrScreenState extends State<CrewQrScreen> {
                 width: 100,
                 height: 100,
                 child: RaisedButton(
-                  color: Color(0x30000000),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(90), side: BorderSide(color: Colors.white)),
+                  color: const Color(0x30000000),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(90), side: const BorderSide(color: Colors.white)),
                   onPressed: switchTorch,
                   child: Icon(
                     Icons.flash_on,
@@ -123,10 +123,11 @@ class _CrewQrScreenState extends State<CrewQrScreen> {
         scaffold.currentState!.showSnackBar(const SnackBar(content: Text("Checking QR code")));
       }
       if (scanData.code != null) {
-        Crew? crew = await DataRepository.getCrew(scanData.code!, widget.event, authBloc);
+        Crew? crew = await MyDatabase.getCrew(scanData.code!, widget.event);
+        // Crew? crew = await DataRepository.getCrew(scanData.code!, widget.event, authBloc);
         if (crew != null) {
           Route route;
-          if (widget.competition.type == 'REGULAR_DRIVE') {
+          if (widget.competition.type == CompetitionType.REGULAR_DRIVE) {
             route = MaterialPageRoute(
                 builder: (context) => RegStartScreen(
                       event: widget.event,
@@ -134,11 +135,13 @@ class _CrewQrScreenState extends State<CrewQrScreen> {
                       crew: crew,
                     ));
           } else {
+            var fields = await MyDatabase.getCompetitionFields(widget.competition);
             route = MaterialPageRoute(
                 builder: (context) => CustomScreen(
                       event: widget.event,
                       competition: widget.competition,
                       crew: crew,
+                      fields: fields,
                     ));
           }
           Navigator.pushReplacement(context, route);

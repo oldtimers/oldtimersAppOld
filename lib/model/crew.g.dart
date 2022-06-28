@@ -14,7 +14,7 @@ Crew _$CrewFromJson(Map<String, dynamic> json) => Crew(
       json['car'] as String,
       json['driverName'] as String,
       json['qr'] as String,
-      json['eventId'] as String,
+      json['eventId'] as int,
     );
 
 Map<String, dynamic> _$CrewToJson(Crew instance) => <String, dynamic>{
