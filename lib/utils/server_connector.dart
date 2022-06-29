@@ -28,7 +28,7 @@ class ServerConnector {
       throw ServerConnectionException();
     }
     if (authentication == null) {
-      authBloc.add(LostAuthentication());
+      // authBloc.add(LostAuthentication());
       throw ServerConnectionException();
     }
     return authentication;

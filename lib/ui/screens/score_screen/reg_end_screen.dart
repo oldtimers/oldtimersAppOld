@@ -25,19 +25,28 @@ class _RegEndScreenState extends State<RegEndScreen> {
   late AuthenticationBloc authBloc;
   late Timer timer;
   List<Crew> crewsInCompetition = [];
+  final GlobalKey<ScaffoldState> scaffold = GlobalKey<ScaffoldState>();
   final RefreshController _refreshController = RefreshController(initialRefresh: false);
 
   Future<void> updateCrews() async {
-    List<dynamic> temp = await DataRepository.getCrewsInRegCompetition(authBloc, widget.event.id, widget.competition.id);
-    List<Crew> temp2 = [];
-    for (var object in temp) {
-      if (object.runtimeType == Crew) {
-        temp2.add(object);
+    var info = 'Dokonano synchronizacji';
+    try {
+      List<dynamic> temp = await DataRepository.getCrewsInRegCompetition(authBloc, widget.event.id, widget.competition.id);
+      List<Crew> temp2 = [];
+      for (var object in temp) {
+        if (object.runtimeType == Crew) {
+          temp2.add(object);
+        }
       }
+      setState(() {
+        crewsInCompetition = temp2;
+      });
+    } on Exception catch (_) {
+      info = 'Brak Internetu';
     }
-    setState(() {
-      crewsInCompetition = temp2;
-    });
+    if (scaffold.currentState != null) {
+      scaffold.currentState!.showSnackBar(SnackBar(content: Text(info)));
+    }
     _refreshController.refreshCompleted();
   }
 
@@ -77,6 +86,7 @@ class _RegEndScreenState extends State<RegEndScreen> {
       DeviceOrientation.portraitDown,
     ]);
     return Scaffold(
+      key: scaffold,
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         backgroundColor: Colors.black,
@@ -118,37 +128,37 @@ class _RegEndScreenState extends State<RegEndScreen> {
           controller: _refreshController,
           child: crewsInCompetition.isNotEmpty
               ? ListView.separated(
-                  itemCount: crewsInCompetition.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    Crew crew = crewsInCompetition[index];
-                    return InkWell(
-                      hoverColor: Colors.red,
-                      focusColor: Colors.green,
-                      splashColor: Colors.blue,
-                      highlightColor: Colors.grey,
-                      child: CrewTile(crew),
-                      onTap: () => showPopup(crew),
-                    );
-                  },
-                  separatorBuilder: (BuildContext context, int index) {
-                    return Container(
-                      color: Colors.black,
-                      height: 1,
-                    );
-                  },
-                  controller: null,
-                )
+            itemCount: crewsInCompetition.length,
+            itemBuilder: (BuildContext context, int index) {
+              Crew crew = crewsInCompetition[index];
+              return InkWell(
+                hoverColor: Colors.red,
+                focusColor: Colors.green,
+                splashColor: Colors.blue,
+                highlightColor: Colors.grey,
+                child: CrewTile(crew),
+                onTap: () => showPopup(crew),
+              );
+            },
+            separatorBuilder: (BuildContext context, int index) {
+              return Container(
+                color: Colors.black,
+                height: 1,
+              );
+            },
+            controller: null,
+          )
               : Center(
-                  child: Container(
-                      color: Colors.black,
-                      child: const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text(
-                          "None of the started crews",
-                          style: TextStyle(color: Colors.white, fontSize: 30),
-                        ),
-                      )),
-                ),
+            child: Container(
+                color: Colors.black,
+                child: const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text(
+                    "None of the started crews",
+                    style: TextStyle(color: Colors.white, fontSize: 30),
+                  ),
+                )),
+          ),
         ),
       ),
     );
