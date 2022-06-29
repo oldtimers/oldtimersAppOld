@@ -59,19 +59,6 @@ class _CompetitionScreenState extends State<CompetitionScreen> {
         ),
         color: Colors.black,
       ));
-      if (widget.competition.possibleInvalid){
-        fields.add(Container(
-          child: const Padding(
-            padding: EdgeInsets.all(10.0),
-            child: Text(
-              "Enabled possible invalid",
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 20.0, color: Colors.white),
-            ),
-          ),
-          color: Colors.black,
-        ));
-      }
       if (i < widget.competitionFields.length - 1) {
         fields.add(SizedBox(
           height: height * 0.01,
@@ -120,32 +107,50 @@ class _CompetitionScreenState extends State<CompetitionScreen> {
                   padding: EdgeInsets.only(bottom: 0.01 * height),
                   child: Column(
                     children: [
-                      Container(
-                        child: Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: Text(
-                            "Name: " + (widget.competition.name).toString(),
-                            textAlign: TextAlign.left,
-                            style: const TextStyle(fontSize: 15.0, color: Colors.white),
+                          Container(
+                            child: Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Text(
+                                "Name: " + (widget.competition.name).toString(),
+                                textAlign: TextAlign.left,
+                                style: const TextStyle(fontSize: 15.0, color: Colors.white),
+                              ),
+                            ),
+                            color: Colors.black,
                           ),
-                        ),
-                        color: Colors.black,
-                      ),
-                      SizedBox(
-                        height: height * 0.01,
-                      ),
-                      Container(
-                        child: Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: Text(
-                            "Description: " + widget.competition.description,
-                            textAlign: TextAlign.left,
-                            style: const TextStyle(fontSize: 20.0, color: Colors.white),
+                          SizedBox(
+                            height: height * 0.01,
                           ),
-                        ),
-                        color: Colors.black,
-                      ),
-                    ],
+                          Container(
+                            child: Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Text(
+                                "Description: " + widget.competition.description,
+                                textAlign: TextAlign.left,
+                                style: const TextStyle(fontSize: 20.0, color: Colors.white),
+                              ),
+                            ),
+                            color: Colors.black,
+                          ),
+                        ] +
+                        (widget.competition.possibleInvalid
+                            ? [
+                                SizedBox(
+                                  height: height * 0.01,
+                                ),
+                                Container(
+                                  child: const Padding(
+                                    padding: EdgeInsets.all(10.0),
+                                    child: Text(
+                                      "Enabled possible invalid",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(fontSize: 20.0, color: Colors.white),
+                                    ),
+                                  ),
+                                  color: Colors.black,
+                                )
+                              ]
+                            : []),
                   ),
                 ),
                 const Text(
