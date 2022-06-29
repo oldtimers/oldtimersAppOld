@@ -99,7 +99,7 @@ class _$FlutterDatabase extends FlutterDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `Crew` (`id` INTEGER NOT NULL, `number` INTEGER NOT NULL, `yearOfProduction` INTEGER NOT NULL, `phone` TEXT NOT NULL, `car` TEXT NOT NULL, `driverName` TEXT NOT NULL, `qr` TEXT NOT NULL, `eventId` INTEGER NOT NULL, FOREIGN KEY (`eventId`) REFERENCES `Event` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION, PRIMARY KEY (`id`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `Result` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `eventId` INTEGER NOT NULL, `userId` INTEGER NOT NULL, `body` TEXT NOT NULL)');
+            'CREATE TABLE IF NOT EXISTS `Result` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `eventId` INTEGER NOT NULL, `userId` INTEGER NOT NULL, `body` TEXT NOT NULL, `type` INTEGER NOT NULL)');
         await database.execute('CREATE UNIQUE INDEX `index_Crew_qr` ON `Crew` (`qr`)');
         await database.execute('CREATE INDEX `index_Result_userId_eventId` ON `Result` (`userId`, `eventId`)');
 
@@ -504,10 +504,10 @@ class _$CrewDao extends CrewDao {
 class _$ResultDao extends ResultDao {
   _$ResultDao(this.database, this.changeListener)
       : _queryAdapter = QueryAdapter(database),
-        _resultInsertionAdapter = InsertionAdapter(
-            database, 'Result', (Result item) => <String, Object?>{'id': item.id, 'eventId': item.eventId, 'userId': item.userId, 'body': item.body}),
-        _resultDeletionAdapter = DeletionAdapter(
-            database, 'Result', ['id'], (Result item) => <String, Object?>{'id': item.id, 'eventId': item.eventId, 'userId': item.userId, 'body': item.body});
+        _resultInsertionAdapter = InsertionAdapter(database, 'Result',
+            (Result item) => <String, Object?>{'id': item.id, 'eventId': item.eventId, 'userId': item.userId, 'body': item.body, 'type': item.type}),
+        _resultDeletionAdapter = DeletionAdapter(database, 'Result', ['id'],
+            (Result item) => <String, Object?>{'id': item.id, 'eventId': item.eventId, 'userId': item.userId, 'body': item.body, 'type': item.type});
 
   final sqflite.DatabaseExecutor database;
 
@@ -520,15 +520,22 @@ class _$ResultDao extends ResultDao {
   final DeletionAdapter<Result> _resultDeletionAdapter;
 
   @override
-  Future<List<Result>> findByEventAndUser(int eventId, int userId) async {
-    return _queryAdapter.queryList('select * from Result where eventId = ?1 and userId = ?2',
-        mapper: (Map<String, Object?> row) => Result(row['id'] as int, row['eventId'] as int, row['userId'] as int, row['body'] as String),
-        arguments: [eventId, userId]);
+  Future<List<Result>> findByEventAndUser(int eventId, int userId, int type) async {
+    return _queryAdapter.queryList('select * from Result where eventId = ?1 and userId = ?2 and type = ?3',
+        mapper: (Map<String, Object?> row) => Result(row['id'] as int?, row['eventId'] as int, row['userId'] as int, row['body'] as String, row['type'] as int),
+        arguments: [eventId, userId, type]);
   }
 
   @override
-  Future<void> insertResult(Result result) async {
-    await _resultInsertionAdapter.insert(result, OnConflictStrategy.abort);
+  Future<Result?> findById(int id) async {
+    return _queryAdapter.query('select * from Result where id = ?1',
+        mapper: (Map<String, Object?> row) => Result(row['id'] as int?, row['eventId'] as int, row['userId'] as int, row['body'] as String, row['type'] as int),
+        arguments: [id]);
+  }
+
+  @override
+  Future<int> insertResult(Result result) {
+    return _resultInsertionAdapter.insertAndReturnId(result, OnConflictStrategy.abort);
   }
 
   @override

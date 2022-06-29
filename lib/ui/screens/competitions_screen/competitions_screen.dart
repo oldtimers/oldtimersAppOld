@@ -25,6 +25,7 @@ class _CompetitionsScreenState extends State<CompetitionsScreen> {
   late AuthenticationBloc authBloc;
   late List<Competition> competitions;
   bool isLoaded = false;
+  bool toSynchronize = false;
 
   @override
   Widget build(BuildContext context) {
@@ -54,6 +55,7 @@ class _CompetitionsScreenState extends State<CompetitionsScreen> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 TextButton(
+                    style: (toSynchronize ? TextButton.styleFrom(primary: Colors.red) : TextButton.styleFrom(primary: Colors.green)),
                     onPressed: () async {
                       _synchronizeEvent(widget.event);
                     },
@@ -117,15 +119,17 @@ class _CompetitionsScreenState extends State<CompetitionsScreen> {
   @override
   void initState() {
     authBloc = BlocProvider.of<AuthenticationBloc>(context);
-    _getCompetitions(widget.event);
+    _loadFromDb(widget.event);
     super.initState();
   }
 
-  void _getCompetitions(Event event) async {
+  void _loadFromDb(Event event) async {
     var temp = await MyDatabase.getCompetitions(event, authBloc);
+    var results = await MyDatabase.getResults(event, authBloc, 0) + await MyDatabase.getResults(event, authBloc, 1);
     setState(() {
       competitions = temp;
       isLoaded = true;
+      toSynchronize = results.isNotEmpty;
     });
   }
 
@@ -145,10 +149,7 @@ class _CompetitionsScreenState extends State<CompetitionsScreen> {
         scaffold.currentState!.showSnackBar(const SnackBar(content: Text('Brak Internetu, synchronizacja nie powiodła się')));
       }
     } finally {
-      setState(() {
-        competitions = temp;
-        isLoaded = true;
-      });
+      _loadFromDb(event);
     }
   }
 }
