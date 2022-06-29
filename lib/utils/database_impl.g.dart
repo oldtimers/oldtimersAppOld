@@ -491,6 +491,14 @@ class _$CrewDao extends CrewDao {
   }
 
   @override
+  Future<Crew?> findCrewByNr(int nr, int eventId) async {
+    return _queryAdapter.query('select * from Crew where number = ?1 and eventId = ?2',
+        mapper: (Map<String, Object?> row) => Crew(row['id'] as int, row['number'] as int, row['yearOfProduction'] as int, row['phone'] as String,
+            row['car'] as String, row['driverName'] as String, row['qr'] as String, row['eventId'] as int),
+        arguments: [nr, eventId]);
+  }
+
+  @override
   Future<void> insertCrews(List<Crew> crews) async {
     await _crewInsertionAdapter.insertList(crews, OnConflictStrategy.abort);
   }

@@ -11,6 +11,8 @@ import 'package:oldtimers_rally_app/model/event.dart';
 import 'package:oldtimers_rally_app/utils/data_repository.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
+import '../manual_crew_dialog.dart';
+
 class RegEndScreen extends StatefulWidget {
   final Competition competition;
   final Event event;
@@ -48,6 +50,15 @@ class _RegEndScreenState extends State<RegEndScreen> {
       scaffold.currentState!.showSnackBar(SnackBar(content: Text(info)));
     }
     _refreshController.refreshCompleted();
+  }
+
+  void showInputPopup() async {
+    await showDialog(
+        context: context,
+        builder: (BuildContext dialogContext) {
+          myF(Crew crew) => {showPopup(crew)};
+          return ManualCrewDialog(authBloc, myF, widget.event);
+        });
   }
 
   void showPopup(Crew crew) async {
@@ -111,6 +122,12 @@ class _RegEndScreenState extends State<RegEndScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
+                TextButton(
+                    style: TextButton.styleFrom(primary: Colors.green),
+                    onPressed: () async {
+                      showInputPopup();
+                    },
+                    child: const Text('WPISZ RĘCZNIE')),
                 Text(
                   widget.competition.name,
                   style: TextStyle(fontSize: 10.0, fontWeight: FontWeight.w500),
@@ -128,26 +145,26 @@ class _RegEndScreenState extends State<RegEndScreen> {
           controller: _refreshController,
           child: crewsInCompetition.isNotEmpty
               ? ListView.separated(
-            itemCount: crewsInCompetition.length,
-            itemBuilder: (BuildContext context, int index) {
-              Crew crew = crewsInCompetition[index];
-              return InkWell(
-                hoverColor: Colors.red,
-                focusColor: Colors.green,
-                splashColor: Colors.blue,
-                highlightColor: Colors.grey,
-                child: CrewTile(crew),
-                onTap: () => showPopup(crew),
-              );
-            },
-            separatorBuilder: (BuildContext context, int index) {
-              return Container(
-                color: Colors.black,
-                height: 1,
-              );
-            },
-            controller: null,
-          )
+                  itemCount: crewsInCompetition.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    Crew crew = crewsInCompetition[index];
+                    return InkWell(
+                      hoverColor: Colors.red,
+                      focusColor: Colors.green,
+                      splashColor: Colors.blue,
+                      highlightColor: Colors.grey,
+                      child: CrewTile(crew),
+                      onTap: () => showPopup(crew),
+                    );
+                  },
+                  separatorBuilder: (BuildContext context, int index) {
+                    return Container(
+                      color: Colors.black,
+                      height: 1,
+                    );
+                  },
+                  controller: null,
+                )
               : Center(
                   child: Container(
                       color: Colors.black,
@@ -218,7 +235,7 @@ class _ConfirmDialogState extends State<ConfirmDialog> {
     return !loading
         ? AlertDialog(
             title: Text(
-              "Czy na pewno chcesz zatrzymać załogę?",
+              "Zatrzymać załogę " + widget.crew.number.toString() + "?",
               style: Theme.of(context).textTheme.subtitle1,
             ),
             actions: [

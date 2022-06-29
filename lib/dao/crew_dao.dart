@@ -9,6 +9,9 @@ abstract class CrewDao {
   @Query('select * from Crew where qr = :qr and eventId = :eventId')
   Future<Crew?> findCrewByQr(String qr, int eventId);
 
+  @Query('select * from Crew where number = :nr and eventId = :eventId')
+  Future<Crew?> findCrewByNr(int nr, int eventId);
+
   @insert
   Future<void> insertCrews(List<Crew> crews);
 

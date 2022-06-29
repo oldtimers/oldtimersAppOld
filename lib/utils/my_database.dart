@@ -105,4 +105,10 @@ class MyDatabase {
     var auth = retrieveAuthentication(authBloc);
     return await db.resultDao.findByEventAndUser(event.id, auth.userId, type);
   }
+
+  static Future<Crew?> getCrewByNr(int nr, Event event, AuthenticationBloc authBloc) async {
+    var db = await getInstance();
+    var auth = retrieveAuthentication(authBloc);
+    return await db.crewDao.findCrewByNr(nr, event.id);
+  }
 }
