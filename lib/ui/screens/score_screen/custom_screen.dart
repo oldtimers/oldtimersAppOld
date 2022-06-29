@@ -132,7 +132,7 @@ class _CustomScreenState extends State<CustomScreen> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: const [
                   Text(
-                    "SCORES",
+                    "WYNIKI",
                     style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w500),
                   )
                 ],
@@ -159,7 +159,7 @@ class _CustomScreenState extends State<CustomScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               Text(
-                sprintf("Crew: %d, %s", [widget.crew.number, widget.crew.driverName]),
+                sprintf("Załoga: %d, %s", [widget.crew.number, widget.crew.driverName]),
                 style: const TextStyle(fontSize: 25.0, fontWeight: FontWeight.w800, color: Colors.white),
                 textAlign: TextAlign.center,
               ),
@@ -183,7 +183,7 @@ class _CustomScreenState extends State<CustomScreen> {
                       Navigator.of(context).pop();
                     }
                   },
-                  child: const Text("Send", style: TextStyle(fontSize: 20.0)),
+                  child: const Text("Wyślij", style: TextStyle(fontSize: 20.0)),
                 ),
               ),
               if (widget.competition.possibleInvalid)
@@ -199,7 +199,7 @@ class _CustomScreenState extends State<CustomScreen> {
                       // Navigator.of(context).pop();
                       showPopup();
                     },
-                    child: const Text("Invalidate result", style: TextStyle(fontSize: 20.0)),
+                    child: const Text("Unieważnij wynik", style: TextStyle(fontSize: 20.0)),
                   ),
                 ),
             ],
@@ -240,17 +240,17 @@ class _ConfirmDialogState extends State<ConfirmDialog> {
     return !loading
         ? AlertDialog(
             title: Text(
-              "Are you sure You want to invalidate result of this crew?",
+              "cy na pewno chcesz unieważnić wynik tej załogi?",
               style: Theme.of(context).textTheme.subtitle1,
             ),
             actions: [
                 RaisedButton(
                   onPressed: sendData,
-                  child: const Text("Yes"),
+                  child: const Text("Tak"),
                 ),
                 RaisedButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  child: const Text("No"),
+                  child: const Text("Nie"),
                 )
               ])
         : const Center(child: CircularProgressIndicator());

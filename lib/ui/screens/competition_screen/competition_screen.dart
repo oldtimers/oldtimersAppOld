@@ -111,7 +111,7 @@ class _CompetitionScreenState extends State<CompetitionScreen> {
                             child: Padding(
                               padding: const EdgeInsets.all(10.0),
                               child: Text(
-                                "Name: " + (widget.competition.name).toString(),
+                                "Nazwa: " + (widget.competition.name).toString(),
                                 textAlign: TextAlign.left,
                                 style: const TextStyle(fontSize: 15.0, color: Colors.white),
                               ),
@@ -125,7 +125,7 @@ class _CompetitionScreenState extends State<CompetitionScreen> {
                             child: Padding(
                               padding: const EdgeInsets.all(10.0),
                               child: Text(
-                                "Description: " + widget.competition.description,
+                                "Opis: " + widget.competition.description,
                                 textAlign: TextAlign.left,
                                 style: const TextStyle(fontSize: 20.0, color: Colors.white),
                               ),
@@ -142,7 +142,7 @@ class _CompetitionScreenState extends State<CompetitionScreen> {
                                   child: const Padding(
                                     padding: EdgeInsets.all(10.0),
                                     child: Text(
-                                      "Enabled possible invalid",
+                                      "Możliwość spalenia próby",
                                       textAlign: TextAlign.center,
                                       style: TextStyle(fontSize: 20.0, color: Colors.white),
                                     ),
@@ -154,7 +154,7 @@ class _CompetitionScreenState extends State<CompetitionScreen> {
                   ),
                 ),
                 const Text(
-                  "Fields",
+                  "Pola",
                   style: TextStyle(fontSize: 25.0, fontWeight: FontWeight.w800, color: Colors.white),
                   textAlign: TextAlign.center,
                 ),
@@ -173,7 +173,7 @@ class _CompetitionScreenState extends State<CompetitionScreen> {
                       Navigator.push(context, MaterialPageRoute(builder: (context) => CrewQrScreen(competition: widget.competition, event: widget.event)));
                     },
                     child: const Text(
-                      "Scan QR",
+                      "Skanuj kod QR",
                       style: TextStyle(fontSize: 20.0),
                     )),
               ],
@@ -217,7 +217,7 @@ class _CompetitionScreenState extends State<CompetitionScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             const Text(
-              "Choose your position",
+              "Wybierz swoją pozycję",
               style: TextStyle(fontSize: 25.0, fontWeight: FontWeight.w800, color: Colors.white),
               textAlign: TextAlign.center,
             ),
@@ -257,7 +257,7 @@ class _CompetitionScreenState extends State<CompetitionScreen> {
                         Navigator.push(context, MaterialPageRoute(builder: (context) => RegEndScreen(competition: widget.competition, event: widget.event)));
                       },
                       child: const Text(
-                        "END",
+                        "KONIEC",
                         style: TextStyle(fontSize: 20.0),
                       )),
                 ),
@@ -271,7 +271,7 @@ class _CompetitionScreenState extends State<CompetitionScreen> {
                     child: Padding(
                       padding: const EdgeInsets.all(10.0),
                       child: Text(
-                        "Average speed: " + (widget.competition.averageSpeed!).toString() + " km/h",
+                        "Średnia prędkość: " + (widget.competition.averageSpeed!).toString() + " km/h",
                         textAlign: TextAlign.left,
                         style: const TextStyle(fontSize: 15.0, color: Colors.white),
                       ),
@@ -285,7 +285,7 @@ class _CompetitionScreenState extends State<CompetitionScreen> {
                     child: Padding(
                       padding: const EdgeInsets.all(10.0),
                       child: Text(
-                        "Description: " + widget.competition.description,
+                        "Opis: " + widget.competition.description,
                         textAlign: TextAlign.left,
                         style: const TextStyle(fontSize: 15.0, color: Colors.white),
                       ),
