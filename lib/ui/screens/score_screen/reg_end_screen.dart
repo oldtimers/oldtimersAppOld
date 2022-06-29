@@ -149,16 +149,16 @@ class _RegEndScreenState extends State<RegEndScreen> {
             controller: null,
           )
               : Center(
-            child: Container(
-                color: Colors.black,
-                child: const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    "None of the started crews",
-                    style: TextStyle(color: Colors.white, fontSize: 30),
-                  ),
-                )),
-          ),
+                  child: Container(
+                      color: Colors.black,
+                      child: const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text(
+                          "Brak wystartowanych załóg",
+                          style: TextStyle(color: Colors.white, fontSize: 30),
+                        ),
+                      )),
+                ),
         ),
       ),
     );
@@ -179,7 +179,7 @@ class CrewTile extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: Row(
           children: [
-            Text("Crew number: " + crew.number.toString() + " Name: " + crew.driverName),
+            Text("Numer załogi: " + crew.number.toString() + " Kierowca: " + crew.driverName),
           ],
         ),
       ),
@@ -218,21 +218,21 @@ class _ConfirmDialogState extends State<ConfirmDialog> {
     return !loading
         ? AlertDialog(
             title: Text(
-              "Are you sure You want to stop this crew?",
+              "Czy na pewno chcesz zatrzymać załogę?",
               style: Theme.of(context).textTheme.subtitle1,
             ),
             actions: [
               RaisedButton(
                 onPressed: sendData,
-                child: const Text("Yes"),
+                child: const Text("Tak"),
               ),
               RaisedButton(
                 onPressed: () => Navigator.of(context).pop(),
-                child: const Text("No"),
+                child: const Text("Nie"),
               )
             ],
             content: Text(
-              "End Time: " + widget.timestamp.toString(),
+              "Końcowy czas: " + widget.timestamp.toString(),
               style: Theme.of(context).textTheme.bodyText1,
             ),
           )

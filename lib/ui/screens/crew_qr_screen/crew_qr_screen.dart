@@ -120,7 +120,7 @@ class _CrewQrScreenState extends State<CrewQrScreen> {
     controller.scannedDataStream.listen((scanData) async {
       controller.pauseCamera();
       if (scaffold.currentState != null) {
-        scaffold.currentState!.showSnackBar(const SnackBar(content: Text("Checking QR code")));
+        scaffold.currentState!.showSnackBar(const SnackBar(content: Text("Sprawdzanie kodu QR")));
       }
       if (scanData.code != null) {
         Crew? crew = await MyDatabase.getCrew(scanData.code!, widget.event);
@@ -147,13 +147,13 @@ class _CrewQrScreenState extends State<CrewQrScreen> {
           Navigator.pushReplacement(context, route);
         } else {
           if (scaffold.currentState != null) {
-            scaffold.currentState!.showSnackBar(const SnackBar(content: Text("Invalid QR code")));
+            scaffold.currentState!.showSnackBar(const SnackBar(content: Text("Nieprawidłowy kod QR")));
           }
           controller.resumeCamera();
         }
       } else {
         if (scaffold.currentState != null) {
-          scaffold.currentState!.showSnackBar(const SnackBar(content: Text("Invalid QR code")));
+          scaffold.currentState!.showSnackBar(const SnackBar(content: Text("Nieprawidłowy kod QR")));
         }
         controller.resumeCamera();
       }

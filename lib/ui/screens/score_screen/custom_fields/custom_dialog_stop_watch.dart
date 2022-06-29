@@ -98,7 +98,7 @@ class _CustomDialogStopWatchState extends State<CustomDialogStopWatch> {
                   _stopWatchTimer.onExecute.add(StopWatchExecute.stop);
                   Navigator.of(context).pop<double>(_stopWatchTimer.rawTime.value / 1000);
                 },
-                child: const Text('Accept result', style: TextStyle(color: Colors.white)),
+                child: const Text('Zaakceptuj wynik', style: TextStyle(color: Colors.white)),
               ),
             ),
           ]),

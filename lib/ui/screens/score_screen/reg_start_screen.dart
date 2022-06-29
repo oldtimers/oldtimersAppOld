@@ -55,7 +55,7 @@ class _RegStartScreenState extends State<RegStartScreen> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Text(
-                  "Crew: " + widget.crew.number.toString(),
+                  "Załoga: " + widget.crew.number.toString(),
                   style: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.w500),
                 )
               ],
@@ -82,7 +82,7 @@ class _RegStartScreenState extends State<RegStartScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             const Text(
-              "Start crew by pressing a button",
+              "Naciśnij przycisk by wystartować załogę",
               style: TextStyle(fontSize: 25.0, fontWeight: FontWeight.w800, color: Colors.white),
               textAlign: TextAlign.center,
             ),

@@ -24,7 +24,7 @@ class _LoginScreenState extends State<LoginScreen> {
     var state = BlocProvider.of<AuthenticationBloc>(context).state;
     if (state is AuthenticationInvalidCredentials) {
       loginController.text = state.login;
-      additionalChildren.add(const Text("Invalid login or password"));
+      additionalChildren.add(const Text("Nieprawidłowy login lub hasło"));
     }
     super.initState();
   }
@@ -55,7 +55,7 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: const [
-                Text('Logging'),
+                Text('Logowanie'),
               ],
             ),
           ),
@@ -71,7 +71,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     padding: const EdgeInsets.symmetric(horizontal: 15),
                     child: TextField(
                       controller: loginController,
-                      decoration: const InputDecoration(border: OutlineInputBorder(), labelText: 'Login', hintText: 'Type login'),
+                      decoration: const InputDecoration(border: OutlineInputBorder(), labelText: 'Login', hintText: 'Wpisz login'),
                     ),
                   ),
                   Padding(
@@ -79,7 +79,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: TextField(
                       controller: passwordController,
                       obscureText: true,
-                      decoration: const InputDecoration(border: OutlineInputBorder(), labelText: 'Password', hintText: 'Enter password'),
+                      decoration: const InputDecoration(border: OutlineInputBorder(), labelText: 'Hasło', hintText: 'Wpisz hasło'),
                     ),
                   ),
                   Padding(

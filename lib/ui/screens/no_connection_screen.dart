@@ -25,7 +25,7 @@ class NoConnectionScreen extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                const Text("No connection with server",
+                const Text("Brak połączenia z serwerem",
                     style: TextStyle(
                         fontSize: 25.0,
                         fontWeight: FontWeight.w800,
@@ -43,7 +43,7 @@ class NoConnectionScreen extends StatelessWidget {
                           .add(AppStarted());
                     },
                     child: const Text(
-                      "Connect again",
+                      "Ponowne łączenie",
                       style: TextStyle(fontSize: 20.0),
                     ),
                   ),

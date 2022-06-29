@@ -20,7 +20,7 @@ class _ReactiveStopWatchTimer extends StatelessWidget {
   String get timeString {
     final value = formFieldState.value;
     if (value == null) {
-      return 'Please enter time';
+      return 'Podaj czas';
     }
     return '${value.toStringAsFixed(3)}s';
   }
