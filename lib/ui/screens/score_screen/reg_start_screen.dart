@@ -8,6 +8,7 @@ import 'package:oldtimers_rally_app/model/crew.dart';
 import 'package:oldtimers_rally_app/model/event.dart';
 import 'package:oldtimers_rally_app/ui/screens/crew_qr_screen/crew_qr_screen.dart';
 import 'package:oldtimers_rally_app/utils/data_repository.dart';
+import 'package:sprintf/sprintf.dart';
 
 class RegStartScreen extends StatefulWidget {
   final Crew crew;
@@ -76,14 +77,19 @@ class _RegStartScreenState extends State<RegStartScreen> {
         ],
       ),
       body: Container(
-        decoration: const BoxDecoration(image: DecorationImage(image: AssetImage('resources/reg_background.jpg'), fit: BoxFit.cover)),
+        // decoration: const BoxDecoration(image: DecorationImage(image: AssetImage('resources/reg_background.jpg'), fit: BoxFit.cover)),
         width: width,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
+            Text(
+              sprintf("Załoga: %d, %s", [widget.crew.number, widget.crew.driverName]),
+              style: const TextStyle(fontSize: 25.0, fontWeight: FontWeight.w800, color: Colors.black),
+              textAlign: TextAlign.center,
+            ),
             const Text(
               "Naciśnij przycisk by wystartować załogę",
-              style: TextStyle(fontSize: 25.0, fontWeight: FontWeight.w800, color: Colors.white),
+              style: TextStyle(fontSize: 25.0, fontWeight: FontWeight.w800, color: Colors.black),
               textAlign: TextAlign.center,
             ),
             Padding(

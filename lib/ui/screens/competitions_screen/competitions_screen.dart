@@ -67,7 +67,7 @@ class _CompetitionsScreenState extends State<CompetitionsScreen> {
           centerTitle: true,
         ),
         body: Container(
-          decoration: const BoxDecoration(image: DecorationImage(image: AssetImage('resources/effi_background.jpg'), fit: BoxFit.cover)),
+          // decoration: const BoxDecoration(image: DecorationImage(image: AssetImage('resources/effi_background.jpg'), fit: BoxFit.cover)),
           width: width,
           height: height,
           child: isLoaded

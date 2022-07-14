@@ -38,10 +38,10 @@ class _HomeScreenState extends State<HomeScreen> {
           leadingWidth: 100,
           leading: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15),
-            child: Image.asset(
-              'resources/OLDTIMERS-WEB LOGO.png',
-              fit: BoxFit.contain,
-            ),
+            // child: Image.asset(
+            //   'resources/OLDTIMERS-WEB LOGO.png',
+            //   fit: BoxFit.contain,
+            // ),
           ),
           title: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 5),
@@ -66,7 +66,7 @@ class _HomeScreenState extends State<HomeScreen> {
           centerTitle: true,
         ),
         body: Container(
-          decoration: const BoxDecoration(image: DecorationImage(image: AssetImage('resources/background_main_photo.jpg'), fit: BoxFit.cover)),
+          // decoration: const BoxDecoration(image: DecorationImage(image: AssetImage('resources/background_main_photo.jpg'), fit: BoxFit.cover)),
           width: width,
           height: height,
           child: isLoaded

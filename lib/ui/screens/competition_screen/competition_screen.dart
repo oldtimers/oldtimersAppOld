@@ -93,7 +93,7 @@ class _CompetitionScreenState extends State<CompetitionScreen> {
       body: Container(
           width: width,
           height: height,
-          decoration: const BoxDecoration(image: DecorationImage(image: AssetImage('resources/time_background.jpg'), fit: BoxFit.cover)),
+          // decoration: const BoxDecoration(image: DecorationImage(image: AssetImage('resources/time_background.jpg'), fit: BoxFit.cover)),
           child: SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -155,7 +155,7 @@ class _CompetitionScreenState extends State<CompetitionScreen> {
                 ),
                 const Text(
                   "Pola",
-                  style: TextStyle(fontSize: 25.0, fontWeight: FontWeight.w800, color: Colors.white),
+                  style: TextStyle(fontSize: 25.0, fontWeight: FontWeight.w800, color: Colors.black),
                   textAlign: TextAlign.center,
                 ),
                 Padding(
@@ -212,13 +212,13 @@ class _CompetitionScreenState extends State<CompetitionScreen> {
         centerTitle: true,
       ),
       body: Container(
-        decoration: BoxDecoration(image: DecorationImage(image: AssetImage('resources/reg_background.jpg'), fit: BoxFit.cover)),
+        // decoration: BoxDecoration(image: DecorationImage(image: AssetImage('resources/reg_background.jpg'), fit: BoxFit.cover)),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             const Text(
               "Wybierz swoją pozycję",
-              style: TextStyle(fontSize: 25.0, fontWeight: FontWeight.w800, color: Colors.white),
+              style: TextStyle(fontSize: 25.0, fontWeight: FontWeight.w800, color: Colors.black),
               textAlign: TextAlign.center,
             ),
             Row(

@@ -153,14 +153,14 @@ class _CustomScreenState extends State<CustomScreen> {
           ],
         ),
         body: Container(
-          decoration: const BoxDecoration(image: DecorationImage(image: AssetImage('resources/time_background.jpg'), fit: BoxFit.cover)),
+          // decoration: const BoxDecoration(image: DecorationImage(image: AssetImage('resources/time_background.jpg'), fit: BoxFit.cover)),
           width: width,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               Text(
                 sprintf("Załoga: %d, %s", [widget.crew.number, widget.crew.driverName]),
-                style: const TextStyle(fontSize: 25.0, fontWeight: FontWeight.w800, color: Colors.white),
+                style: const TextStyle(fontSize: 25.0, fontWeight: FontWeight.w800, color: Colors.black),
                 textAlign: TextAlign.center,
               ),
               ListView.separated(
@@ -240,7 +240,7 @@ class _ConfirmDialogState extends State<ConfirmDialog> {
     return !loading
         ? AlertDialog(
             title: Text(
-              "cy na pewno chcesz unieważnić wynik tej załogi?",
+              "Czy na pewno chcesz unieważnić wynik tej załogi?",
               style: Theme.of(context).textTheme.subtitle1,
             ),
             actions: [

@@ -138,7 +138,7 @@ class _RegEndScreenState extends State<RegEndScreen> {
         ],
       ),
       body: Container(
-        decoration: const BoxDecoration(image: DecorationImage(image: AssetImage('resources/reg_background.jpg'), fit: BoxFit.cover)),
+        // decoration: const BoxDecoration(image: DecorationImage(image: AssetImage('resources/reg_background.jpg'), fit: BoxFit.cover)),
         child: SmartRefresher(
           header: WaterDropHeader(),
           onRefresh: () => updateCrews(),
