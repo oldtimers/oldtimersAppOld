@@ -30,15 +30,22 @@ class _ManualCrewDialogState extends State<ManualCrewDialog> {
     setState(() {
       loading = true;
     });
-    Crew? crew = await MyDatabase.getCrewByNr(int.parse(numberController.value.text), widget.event, widget.authBloc);
-    if (crew == null) {
+    try {
+      Crew? crew = await MyDatabase.getCrewByNr(int.parse(numberController.value.text), widget.event, widget.authBloc);
+      if (crew == null) {
+        numberController.clear();
+        setState(() {
+          loading = false;
+        });
+      } else {
+        Navigator.of(context).pop();
+        widget.actionOnEnd(crew);
+      }
+    } on FormatException catch (e) {
       numberController.clear();
       setState(() {
         loading = false;
       });
-    } else {
-      Navigator.of(context).pop();
-      widget.actionOnEnd(crew);
     }
   }
 

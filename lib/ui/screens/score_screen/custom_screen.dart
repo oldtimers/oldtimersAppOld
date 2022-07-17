@@ -51,6 +51,8 @@ class _CustomScreenState extends State<CustomScreen> {
             return FormControl<double>(validators: [
               Validators.required,
             ]);
+          case FieldType.DATETIME:
+            return FormControl<TimeOfDay>(validators: [Validators.required]);
         }
       },
     );
@@ -91,6 +93,25 @@ class _CustomScreenState extends State<CustomScreen> {
           );
         case FieldType.TIMER:
           return ReactiveStopWatchTimer(formControlName: competitionField.order.toString(), label: competitionField.label);
+        case FieldType.DATETIME:
+          return ReactiveTimePicker(
+              formControlName: competitionField.order.toString(),
+              builder: (context, picker, child) {
+                return InkWell(
+                  onTap: () => picker.showPicker(),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(competitionField.label),
+                      Row(children: [
+                        const Icon(Icons.access_time),
+                        Text(picker.value != null ? sprintf.call("%d:%d", [picker.value!.hour, picker.value!.minute]) : "Wprowadź wartość")
+                      ]),
+                    ],
+                  ),
+                );
+              });
       }
     }).toList();
   }

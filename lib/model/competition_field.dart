@@ -24,4 +24,4 @@ class CompetitionField {
   factory CompetitionField.fromJson(Map<String, dynamic> json) => _$CompetitionFieldFromJson(json);
 }
 
-enum FieldType { FLOAT, INT, BOOLEAN, TIMER }
+enum FieldType { FLOAT, INT, BOOLEAN, TIMER, DATETIME }

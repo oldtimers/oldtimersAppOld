@@ -27,23 +27,25 @@ class _ReactiveStopWatchTimer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label),
-        InkWell(
-          onTap: () => showDialog(
-            context: context,
-            builder: (_) => CustomDialogStopWatch(initialTime: formFieldState.value ?? 0),
-          ).then((value) {
-            if (value is double) {
-              formFieldState.control.updateValue(value);
-            }
-          }),
-          child: Text(timeString),
-        ),
-      ],
+    return InkWell(
+      onTap: () => showDialog(
+        context: context,
+        builder: (_) => CustomDialogStopWatch(initialTime: formFieldState.value ?? 0),
+      ).then((value) {
+        if (value is double) {
+          formFieldState.control.updateValue(value);
+        }
+      }),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label),
+          InkWell(
+            child: Text(timeString),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -19,7 +19,7 @@ Map<String, dynamic> _$CompetitionFieldToJson(CompetitionField instance) =>
     <String, dynamic>{
       'id': instance.id,
       'competitionId': instance.competitionId,
-      'type': _$FieldTypeEnumMap[instance.type],
+      'type': _$FieldTypeEnumMap[instance.type]!,
       'order': instance.order,
       'label': instance.label,
     };
@@ -29,4 +29,5 @@ const _$FieldTypeEnumMap = {
   FieldType.INT: 'INT',
   FieldType.BOOLEAN: 'BOOLEAN',
   FieldType.TIMER: 'TIMER',
+  FieldType.DATETIME: 'DATETIME',
 };

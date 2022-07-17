@@ -21,7 +21,7 @@ Map<String, dynamic> _$CompetitionToJson(Competition instance) => <String, dynam
       'eventId': instance.eventId,
       'name': instance.name,
       'description': instance.description,
-      'type': _$CompetitionTypeEnumMap[instance.type],
+      'type': _$CompetitionTypeEnumMap[instance.type]!,
       'averageSpeed': instance.averageSpeed,
       'possibleInvalid': instance.possibleInvalid,
     };

@@ -3,7 +3,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <application
-        android:icon="OLDTIMERS-WEB LOGO.png"
+        android:label="oldtimers_rally_app"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

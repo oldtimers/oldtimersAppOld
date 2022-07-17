@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:oldtimers_rally_app/authentication/authentication.dart';
 import 'package:oldtimers_rally_app/const.dart';
 import 'package:oldtimers_rally_app/model/competition.dart';
@@ -52,8 +53,17 @@ class DataRepository {
   static setResult(Competition competition, Crew crew, Event event, Map<String, dynamic> body, AuthenticationBloc authBloc) async {
     Map<String, dynamic> tempBody = {"crewId": crew.id, "competitionId": competition.id};
     tempBody.addAll(body);
-    Result result = await MyDatabase.saveResult(Result(null, event.id, MyDatabase.retrieveAuthentication(authBloc).userId, jsonEncode(tempBody).toString(), 0));
-    tryToSendRequest(sprintf(kScore, [event.id]), authBloc, requestType.POST, jsonEncode(tempBody), result);
+    var encodedJson = jsonEncode(tempBody, toEncodable: _myDataSerializer);
+    Result result = await MyDatabase.saveResult(Result(null, event.id, MyDatabase.retrieveAuthentication(authBloc).userId, encodedJson.toString(), 0));
+    tryToSendRequest(sprintf(kScore, [event.id]), authBloc, requestType.POST, encodedJson, result);
+  }
+
+  static dynamic _myDataSerializer(dynamic object) {
+    if (object is TimeOfDay) {
+      return object.minute + object.hour * 60;
+    } else {
+      return object;
+    }
   }
 
   static getCrewsInRegCompetition(AuthenticationBloc authBloc, int eventId, int competitionId) async {

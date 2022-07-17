@@ -1,3 +1,6 @@
+import 'dart:collection';
+
+import 'package:accordion/accordion.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,6 +10,7 @@ import 'package:oldtimers_rally_app/model/competition.dart';
 import 'package:oldtimers_rally_app/model/competition_field.dart';
 import 'package:oldtimers_rally_app/model/event.dart';
 import 'package:oldtimers_rally_app/utils/data_repository.dart';
+import 'package:tuple/tuple.dart';
 
 import '../../../utils/my_database.dart';
 import '../competition_screen/competition_screen.dart';
@@ -21,9 +25,10 @@ class CompetitionsScreen extends StatefulWidget {
 }
 
 class _CompetitionsScreenState extends State<CompetitionsScreen> {
+  static final RegExp _regExp = RegExp(r"^[a-zA-Z]*");
   final GlobalKey<ScaffoldState> scaffold = GlobalKey<ScaffoldState>();
   late AuthenticationBloc authBloc;
-  late List<Competition> competitions;
+  late List<Tuple2<String, List<Competition>>> groups;
   bool isLoaded = false;
   bool toSynchronize = false;
 
@@ -66,52 +71,47 @@ class _CompetitionsScreenState extends State<CompetitionsScreen> {
           ),
           centerTitle: true,
         ),
-        body: Container(
-          // decoration: const BoxDecoration(image: DecorationImage(image: AssetImage('resources/effi_background.jpg'), fit: BoxFit.cover)),
-          width: width,
-          height: height,
-          child: isLoaded
-              ? ListView(
-                  shrinkWrap: true,
-                  padding: const EdgeInsets.all(15.0),
-                  scrollDirection: Axis.vertical,
-                  children: ([
-                        Center(
-                          child: Text(widget.event.name),
-                        )
-                      ]) +
-                      competitions
-                          .map((competition) => Center(
-                                child: Padding(
-                                  padding: EdgeInsets.only(bottom: 0.05 * height),
-                                  child: FlatButton(
-                                      color: Colors.black,
-                                      textColor: Colors.white,
-                                      splashColor: Colors.blueAccent,
-                                      padding: const EdgeInsets.all(30),
-                                      onPressed: () async {
-                                        List<CompetitionField> fields = await MyDatabase.getCompetitionFields(competition);
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) => CompetitionScreen(
-                                                      event: widget.event,
-                                                      competition: competition,
-                                                      competitionFields: fields,
-                                                    )));
-                                      },
-                                      child: Text(
-                                        competition.name,
-                                        style: const TextStyle(fontSize: 20.0),
-                                      )),
-                                ),
-                              ))
-                          .toList(),
-                )
-              : const Center(
-                  child: CircularProgressIndicator(),
-                ),
-        ),
+        body: isLoaded
+            ? Accordion(
+                maxOpenSections: 1,
+                children: groups
+                    .map((group) => AccordionSection(
+                        isOpen: false,
+                        content: Column(
+                            children: group.item2
+                                .map(
+                                  (competition) => Center(
+                                    child: Padding(
+                                      padding: EdgeInsets.only(bottom: 0.05 * height),
+                                      child: FlatButton(
+                                          color: Colors.black,
+                                          textColor: Colors.white,
+                                          splashColor: Colors.blueAccent,
+                                          padding: const EdgeInsets.all(30),
+                                          onPressed: () async {
+                                            List<CompetitionField> fields = await MyDatabase.getCompetitionFields(competition);
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) => CompetitionScreen(
+                                                          event: widget.event,
+                                                          competition: competition,
+                                                          competitionFields: fields,
+                                                        )));
+                                          },
+                                          child: Text(
+                                            competition.name,
+                                            style: const TextStyle(fontSize: 20.0),
+                                          )),
+                                    ),
+                                  ),
+                                )
+                                .toList()),
+                        header: Text(group.item1)))
+                    .toList())
+            : const Center(
+                child: CircularProgressIndicator(),
+              ),
       ),
     );
   }
@@ -126,25 +126,37 @@ class _CompetitionsScreenState extends State<CompetitionsScreen> {
   void _loadFromDb(Event event) async {
     var temp = await MyDatabase.getCompetitions(event, authBloc);
     var results = await MyDatabase.getResults(event, authBloc, 0) + await MyDatabase.getResults(event, authBloc, 1);
+    var grouped = _groupList(temp);
     setState(() {
-      competitions = temp;
+      groups = grouped;
       isLoaded = true;
       toSynchronize = results.isNotEmpty;
     });
+  }
+
+  List<Tuple2<String, List<Competition>>> _groupList(List<Competition> competitions) {
+    SplayTreeMap<String, List<Competition>> mapCompetition = SplayTreeMap<String, List<Competition>>();
+    for (var competition in competitions) {
+      var name = _regExp.firstMatch(competition.name)!.group(0).toString();
+      if (mapCompetition.containsKey(name)) {
+        mapCompetition[name]!.add(competition);
+      } else {
+        mapCompetition[name] = [competition];
+      }
+    }
+    return mapCompetition.entries.map((e) => Tuple2(e.key, e.value)).toList();
   }
 
   void _synchronizeEvent(Event event) async {
     setState(() {
       isLoaded = false;
     });
-    List<Competition> temp = [];
     try {
-      temp = await DataRepository.synchronizeEvent(event, authBloc);
+      await DataRepository.synchronizeEvent(event, authBloc);
       if (scaffold.currentState != null) {
         scaffold.currentState!.showSnackBar(const SnackBar(content: Text('Pomyślnie dokonano synchronizacji')));
       }
     } on Exception catch (_) {
-      temp = competitions;
       if (scaffold.currentState != null) {
         scaffold.currentState!.showSnackBar(const SnackBar(content: Text('Brak Internetu, synchronizacja nie powiodła się')));
       }

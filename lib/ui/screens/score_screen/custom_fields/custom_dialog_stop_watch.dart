@@ -15,7 +15,7 @@ class _CustomDialogStopWatchState extends State<CustomDialogStopWatch> {
   @override
   void initState() {
     super.initState();
-    _stopWatchTimer.setPresetTime(mSec: (widget.initialTime * 1000).toInt());
+    _stopWatchTimer.setPresetTime(mSec: (widget.initialTime * 1000).toInt(), add: false);
   }
 
   @override
@@ -81,7 +81,10 @@ class _CustomDialogStopWatchState extends State<CustomDialogStopWatch> {
                   padding: const EdgeInsets.all(4),
                   color: Colors.red,
                   shape: const StadiumBorder(),
-                  onPressed: () async => _stopWatchTimer.onExecute.add(StopWatchExecute.reset),
+                  onPressed: () async {
+                    _stopWatchTimer.setPresetTime(mSec: 0, add: false);
+                    _stopWatchTimer.onExecute.add(StopWatchExecute.reset);
+                  },
                   child: const Text('Reset', style: TextStyle(color: Colors.white)),
                 ),
               ),
