@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:oldtimers_rally_app/authentication/authentication.dart';
 import 'package:oldtimers_rally_app/model/competition.dart';
 import 'package:oldtimers_rally_app/model/competition_field.dart';
@@ -25,6 +26,7 @@ class CustomScreen extends StatefulWidget {
 }
 
 class _CustomScreenState extends State<CustomScreen> {
+  static final NumberFormat formatter = NumberFormat("00");
   late AuthenticationBloc authBloc;
   late FormGroup formGroup;
 
@@ -106,7 +108,9 @@ class _CustomScreenState extends State<CustomScreen> {
                       Text(competitionField.label),
                       Row(children: [
                         const Icon(Icons.access_time),
-                        Text(picker.value != null ? sprintf.call("%d:%d", [picker.value!.hour, picker.value!.minute]) : "Wprowadź wartość")
+                        Text(picker.value != null
+                            ? sprintf.call("  %s:%s", [formatter.format(picker.value!.hour), formatter.format(picker.value!.minute)])
+                            : "Wprowadź wartość")
                       ]),
                     ],
                   ),

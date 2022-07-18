@@ -76,38 +76,45 @@ class _CompetitionsScreenState extends State<CompetitionsScreen> {
                 maxOpenSections: 1,
                 children: groups
                     .map((group) => AccordionSection(
-                        isOpen: false,
-                        content: Column(
-                            children: group.item2
-                                .map(
-                                  (competition) => Center(
-                                    child: Padding(
-                                      padding: EdgeInsets.only(bottom: 0.05 * height),
-                                      child: FlatButton(
-                                          color: Colors.black,
-                                          textColor: Colors.white,
-                                          splashColor: Colors.blueAccent,
-                                          padding: const EdgeInsets.all(30),
-                                          onPressed: () async {
-                                            List<CompetitionField> fields = await MyDatabase.getCompetitionFields(competition);
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) => CompetitionScreen(
-                                                          event: widget.event,
-                                                          competition: competition,
-                                                          competitionFields: fields,
-                                                        )));
-                                          },
-                                          child: Text(
-                                            competition.name,
-                                            style: const TextStyle(fontSize: 20.0),
-                                          )),
+                          isOpen: false,
+                          content: Column(
+                              children: group.item2
+                                  .map(
+                                    (competition) => Center(
+                                      child: Padding(
+                                        padding: EdgeInsets.only(bottom: 0.05 * height),
+                                        child: FlatButton(
+                                            color: Colors.black,
+                                            textColor: Colors.white,
+                                            splashColor: Colors.blueAccent,
+                                            padding: const EdgeInsets.all(30),
+                                            onPressed: () async {
+                                              List<CompetitionField> fields = await MyDatabase.getCompetitionFields(competition);
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) => CompetitionScreen(
+                                                            event: widget.event,
+                                                            competition: competition,
+                                                            competitionFields: fields,
+                                                          )));
+                                            },
+                                            child: Text(
+                                              competition.name,
+                                              style: const TextStyle(fontSize: 20.0),
+                                            )),
+                                      ),
                                     ),
-                                  ),
-                                )
-                                .toList()),
-                        header: Text(group.item1)))
+                                  )
+                                  .toList()),
+                          header: Text(
+                            group.item1,
+                            style: const TextStyle(fontSize: 20.0, color: Colors.white),
+                          ),
+                          headerBackgroundColor: Colors.black,
+                          headerBackgroundColorOpened: Colors.black,
+                          contentBorderColor: Colors.black,
+                        ))
                     .toList())
             : const Center(
                 child: CircularProgressIndicator(),
