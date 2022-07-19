@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oldtimers_rally_app/model/authentication.dart';
 import 'package:oldtimers_rally_app/utils/my_database.dart';
@@ -21,7 +22,10 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
         } else {
           yield AuthenticationUnauthenticated();
         }
-      } catch (error) {
+      } on PlatformException{
+        yield AuthenticationUnauthenticated();
+      }
+      catch (error) {
         yield AuthenticationNotPossible();
       }
     }
